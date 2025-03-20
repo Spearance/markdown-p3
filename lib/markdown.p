@@ -23,7 +23,9 @@ $result[]
 	^if($parts){
 		^parts.menu{
 			$result[$result^outLineRules[^inLineRules[$parts.piece];$parts.prev;$parts.next]]
-		}{$result[$result^#0A]}
+		}{
+			$result[$result^#0A]
+		}
 	}
 }
 ### End @parse
@@ -147,7 +149,6 @@ $result[^table::create{piece	prev	next}]
 		}
 
 		^result.append[
-#			$.piece[$temp.piece^if($next ne "\n" && $next ne "*" && $next ne ">" && $next ne "-" && $next ne "_"){^temp.offset(1)^{^{\n^}^}$temp.piece}]
 			$.piece[$temp.piece]
 			$.prev[$prev]
 			$.next[$next]
