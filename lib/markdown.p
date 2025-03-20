@@ -90,6 +90,12 @@ $result[$text]
 	^rem{ strike }
 	$result[^result.match[(?<!\b)(~{1,2}\b)([^^~]+?)\1(?!\b)][g]{<s>$match.2</s>}]
 
+	^rem{ inserted }
+	$result[^result.match[(?<!\b)(\+{2}\b)([^^+]+?)\1(?!\b)][g]{<ins>$match.2</ins>}]
+
+	^rem{ marked }
+	$result[^result.match[(?<!\b)(\={2}\b)([^^+]+?)\1(?!\b)][g]{<mark>$match.2</mark>}]
+
 	^rem{ image }
 	$result[^result.match[\!\^[([^^^]]+)\^]\(([^^)]+)\)][g]{<img src="$match.2" alt="^taint[html][$match.1]">}]
 
@@ -199,5 +205,6 @@ _
 ~
 ^#
 !
->}]
+>
++}]
 ### End @auto
