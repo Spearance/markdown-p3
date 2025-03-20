@@ -1,5 +1,4 @@
-@USE
-Debug.p
+# Evgeniy Lepeshkin, 2025 v. 0.1.0
 
 @CLASS
 markdown
@@ -23,7 +22,9 @@ $result[]
 	^if($parts){
 		^parts.menu{
 			$result[$result^outLineRules[^inLineRules[$parts.piece];$parts.prev;$parts.next]]
-		}{$result[$result^#0A]}
+		}{
+			$result[$result^#0A]
+		}
 	}
 }
 ### End @parse
@@ -78,6 +79,9 @@ $result[$text]
 $result[$text]
 
 ^if(def $result){
+	^rem{ new line }
+	$result[^result.match[\^{%\\n%\^}][g]{<br>}]
+
 	^rem{ bold, italic }
 	^if(!^result.match[^^(_{4,}|\*{4,})]){
 		$result[^result.match[(?<![_*])(_{1,3}|\*{1,3}\b)([^^\1]+?)\1][g]{${hTag.[^match.1.length[]].open}${match.2}$hTag.[^match.1.length[]].close}]
@@ -93,7 +97,7 @@ $result[$text]
 	$result[^result.match[\^[([^^^]]+)\^]\(([^^)]+?)(?:\s"([^^"]+?)")?\)][g]{<a href="$match.2"^if(def $match.3){ title="^taint[html][$match.3]"}>$match.1</a>}]
 
 	^rem{ inline code }
-	$result[^result.match[`(.+?)`][g]{<code>$match.1</code>}]
+	$result[^result.match[(?<!`)`([^^`]+?)`(?!`)][g]{<code>$match.1</code>}]
 
 	^rem{ copyright }
 	$result[^result.match[\([cс]\)][gi]{©}]
@@ -147,14 +151,12 @@ $result[^table::create{piece	prev	next}]
 		}
 
 		^result.append[
-#			$.piece[$temp.piece^if($next ne "\n" && $next ne "*" && $next ne ">" && $next ne "-" && $next ne "_"){^temp.offset(1)^{^{\n^}^}$temp.piece}]
-			$.piece[$temp.piece]
+			$.piece[$temp.piece^if(def $temp.piece && !^tStarts.locate[char;$next]){^{%\n%^}^temp.offset(1)$temp.piece^temp.delete[]}]
 			$.prev[$prev]
 			$.next[$next]
 		]
 	}
 }
-#^dstop[$result]
 ### End @splitLines
 
 
@@ -188,4 +190,14 @@ $hTag[
 		$.close[</em></strong>]
 	]
 ]
+
+$tStarts[^table::create{char
+\n
+-
+_
+*
+~
+^#
+!
+>}]
 ### End @auto
