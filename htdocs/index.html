@@ -12,6 +12,10 @@ $file[^file::load[text;test.md]]
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Markdown Parser для Parser 3</title>
 	<style>
+		body {
+			font-family: 'PT Sans','Arial',sans-serif;
+			font-size: 100%;
+		}
 		article {
 			width: 100%;
 			display: flex;
@@ -23,6 +27,9 @@ $file[^file::load[text;test.md]]
 			padding: 2em;
 			border: 1px solid #EEEEEE;
 			overflow-x: scroll;
+		}
+		section h1 {
+			font-size: 170%;
 		}
 		img {
 			width: 100%;
@@ -56,7 +63,10 @@ $file[^file::load[text;test.md]]
 
 		<section>
 			<!-- Пример преобразования -->
-			^markdown:parse[^untaint{$file.text}]
+			$markdown[^markdown::create[
+				$.emoji(true)
+			]]
+			^markdown.parse[^untaint{$file.text}]
 		</section>
 
 	</article>
