@@ -1,7 +1,19 @@
-# Evgeniy Lepeshkin, 2025 v. 0.1.0
+# markdown.p
+# v. 0.1.0
+# Evgeniy Lepeshkin, 2025-03-21
 
 @CLASS
 markdown
+
+#######################################
+# Constructor
+#
+# @param param {hash} - preferences
+# 
+@create[param]
+$self.emoji($param.emoji)
+### End @create
+
 
 #######################################
 # Parse markdown markup to HTML
@@ -25,6 +37,12 @@ $result[]
 		}{
 			$result[$result^#0A]
 		}
+	}
+
+	^rem{ emoji }
+	^if($emoji){
+		^use[emoji-shortcuts.p]
+		$result[^emoji-shortcuts:parse[$result]]
 	}
 }
 ### End @parse
@@ -89,6 +107,12 @@ $result[$text]
 
 	^rem{ strike }
 	$result[^result.match[(?<!\b)(~{1,2}\b)([^^~]+?)\1(?!\b)][g]{<s>$match.2</s>}]
+
+	^rem{ inserted }
+	$result[^result.match[(?<!\b)(\+{2}\b)([^^+]+?)\1(?!\b)][g]{<ins>$match.2</ins>}]
+
+	^rem{ marked }
+	$result[^result.match[(?<!\b)(\={2}\b)([^^+]+?)\1(?!\b)][g]{<mark>$match.2</mark>}]
 
 	^rem{ image }
 	$result[^result.match[\!\^[([^^^]]+)\^]\(([^^)]+)\)][g]{<img src="$match.2" alt="^taint[html][$match.1]">}]
@@ -173,6 +197,8 @@ $result[$text]
 
 #######################################
 @auto[]
+$emoji(true)
+
 $hTag[
 	^rem{ italic }
 	$.1[
@@ -199,5 +225,6 @@ _
 ~
 ^#
 !
->}]
+>
++}]
 ### End @auto

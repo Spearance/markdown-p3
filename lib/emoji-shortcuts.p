@@ -1,0 +1,123 @@
+# emoji-shortcuts.p
+# v. 0.1.0
+# Evgeniy Lepeshkin, 2025-03-21
+
+@CLASS
+emoji-shortcuts
+
+#######################################
+@auto[]
+$hShortCuts[
+	$.angry[
+		$.rules[>:\^(|>:-\^(]
+		$.emoji[😠]
+	]
+	$.blush[
+		$.rules[:"\^)|:-"\^)]
+		$.emoji[😊]
+	]
+	$.broken_heart[
+		$.rules[<\/3|<\\\\3]
+		$.emoji[💔]
+	]
+	$.confused[
+		$.rules[:/|:-/]
+		$.emoji[😕]
+	]
+	$.cry[
+		$.rules[:'\^(|:'-\^(|:,\^(|:,-\^(]
+		$.emoji[😢]
+	]
+	$.frowning[
+		$.rules[:\^(|:-\^(]
+		$.emoji[😦]
+	]
+	$.heart[
+		$.rules[<3]
+		$.emoji[❤️]
+	]
+	$.imp[
+		$.rules[\^]:\^(|\^]:-\^(]
+		$.emoji[👿]
+	]
+	$.innocent[
+		$.rules[o:\^)|O:\^)|o:-\^)|O:-\^)|0:\^)|0:-\^)]
+		$.emoji[😇]
+	]
+	$.joy[
+		$.rules[:'\^)|:'-\^)|:,\^)|:,-\^)|:'D|:'-D|:,D|:,-D]
+		$.emoji[😂]
+	]
+	$.kissing[
+		$.rules[:\*|:-\*]
+		$.emoji[😗]
+	]
+	$.laughing[
+		$.rules['x-\^)|X-\^)]
+		$.emoji[😆]
+	]
+	$.neutral_face[
+		$.rules[:\||:-\|]
+		$.emoji[😐]
+	]
+	$.open_mouth[
+		$.rules[:o|:-o|:O|:-O]
+		$.emoji[😮]
+	]
+	$.rage[
+		$.rules[:^@|:-^@]
+		$.emoji[😡]
+	]
+	$.smile[
+		$.rules[:D|:-D]
+		$.emoji[😄]
+	]
+	$.smiley[
+		$.rules[:\^)|:-\^)]
+		$.emoji[🙂]
+	]
+	$.smiling_imp[
+		$.rules['\^]:\^)|\^]:-\^)]
+		$.emoji[😈]
+	]
+	$.sob[
+		$.rules[:,'\^(|:,'-\^(|^;\^(|^;-\^(]
+		$.emoji[😭]
+	]
+	$.stuck_out_tongue[
+		$.rules[:P|:-P]
+		$.emoji[😛]
+	]
+	$.sunglasses[
+		$.rules[8-\)|B-\)]
+		$.emoji[😎]
+	]
+	$.sweat[
+		$.rules[,:\^(|,:-\^(]
+		$.emoji[😓]
+	]
+	$.sweat_smile[
+		$.rules[,:\^)|,:-\^)]
+		$.emoji[😅]
+	]
+	$.unamused[
+		$.rules[:s|:-S|:z|:-Z|:^$|:-^$']
+		$.emoji[😒]
+	]
+	$.wink[
+		$.rules[^;\^)|^;-\^)]
+		$.emoji[😉]
+	]
+]
+### End @auto
+
+
+#######################################
+@parse[text]
+$result[$text]
+^if(def $result){
+	^hShortCuts.foreach[k;v]{
+		$result[^result.match[(?:\:$k\:|$v.rules)][gi]{$v.emoji}]
+	}
+}
+### End $parse
