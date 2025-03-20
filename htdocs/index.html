@@ -1,0 +1,64 @@
+@USE
+../lib/markdown.p
+
+@auto[]
+$file[^file::load[text;test.md]]
+
+@main[]
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Markdown Parser для Parser 3</title>
+	<style>
+		article {
+			width: 100%;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+		}
+		section {
+			width: calc(50% - 20px);
+			padding: 2em;
+			border: 1px solid #EEEEEE;
+			overflow-x: scroll;
+		}
+		img {
+			width: 100%;
+		}
+		code {
+			background-color: #EEEEEE;
+			border-radius: 4px;
+			padding: 0.2em;
+		}
+		blockquote {
+			border-left: 3px solid #BBBBBB;
+			padding: 1em 0.5em;
+		}
+		.pre {
+			font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+			white-space: pre;
+		}
+	</style>
+</head>
+<body>
+	<h1>Markdown Parser для Parser 3</h1>
+	
+	<p>Преобразует Markdown разметку в HTML.</p>
+
+	<article>
+
+		<section class="pre">
+			<!-- Исходный текст -->
+			^untaint{$file.text}
+		</section>
+
+		<section>
+			<!-- Пример преобразования -->
+			^markdown:parse[^untaint{$file.text}]
+		</section>
+
+	</article>
+</body>
+</html>
