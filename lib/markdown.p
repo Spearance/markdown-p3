@@ -11,12 +11,12 @@ markdown
 # @param param {hash} - preferences
 #
 #	$.emoji(1) - parse emoji shortcuts
-# $.inlineHTML(0) - accept inline HTTML (not safe)
+# $.innerHTML(0) - accept inline HTTML (not safe)
 # $.typograph(1) — use typograph replacement
 # 
 @create[param]
 $self.emoji(^if($param.emoji){$param.emoji}{1})
-$self.inlineHTML(^if($param.inlineHTML){$param.inlineHTML}{0})
+$self.innerHTML(^if($param.innerHTML){$param.innerHTML}{0})
 $self.typograph(^if($param.typograph){$param.typograph}{1})
 ### End @create
 
@@ -32,7 +32,7 @@ $result[]
 
 ^if(def $text){
 	
-	^if(!$inlineHTML && ^text.match[</?[a-z]][i]){
+	^if(!$innerHTML && ^text.match[</?[a-z]][i]){
 		$text[^escapeTagBrackets[$text]]
 	}
 
@@ -197,7 +197,7 @@ $result[$text]
 #######################################
 @auto[]
 $emoji(1)
-$inlineHTML(0)
+$innerHTML(0)
 $typograph(1)
 
 $hTag[
