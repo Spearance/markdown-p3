@@ -117,7 +117,7 @@ $hShortCuts[
 $result[$text]
 ^if(def $result){
 	^hShortCuts.foreach[k;v]{
-		$result[^result.match[(?:\:$k\:|$v.rules)][gi]{$v.emoji}]
+		$result[^result.match[(?<!https|http|ftp)(?:\:$k\:|$v.rules)][gi]{$v.emoji}]
 	}
 }
 ### End $parse

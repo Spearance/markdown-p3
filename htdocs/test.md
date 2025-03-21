@@ -150,9 +150,9 @@ Right aligned columns
 
 ## Links
 
-[link text](http://dev.nodeca.com)
+[link text](https://dev.nodeca.com)
 
-[link with title](http://nodeca.github.io/pica/demo/ "title text!")
+[link with title (mouse over and wait)](http://nodeca.github.io/pica/demo/ "title text!")
 
 Autoconverted link https://github.com/nodeca/pica (enable linkify to see)
 
@@ -173,7 +173,7 @@ With a reference later in the document defining the URL location:
 
 ### Emojies
 
-> Classic markup: :wink: :cry: :laughing: :yum: :heart:
+> Classic markup: :angry: :blush: :broken_heart: :confused: :cry: :frowning: :heart: :imp: :innocent: :joy: :kissing: :laughing: :neutral_face: :open_mouth: :rage: :smile: :smiley: :smiling_imp: :sob: :stuck_out_tongue: :sunglasses: :sweat: :sweat_smile: :unamused: :wink:
 >
 > Shortcuts (emoticons): :-) :-( 8-) ;) :'(
 

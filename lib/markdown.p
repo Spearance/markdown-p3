@@ -9,9 +9,15 @@ markdown
 # Constructor
 #
 # @param param {hash} - preferences
+#
+#	$.emoji(1) - parse emoji shortcuts
+# $.inlineHTML(0) - accept inline HTTML (not safe)
+# $.typograph(1) — use typograph replacement
 # 
 @create[param]
-$self.emoji($param.emoji)
+$self.emoji(^if($param.emoji){$param.emoji}{1})
+$self.inlineHTML(^if($param.inlineHTML){$param.inlineHTML}{0})
+$self.typograph(^if($param.typograph){$param.typograph}{1})
 ### End @create
 
 
@@ -25,8 +31,19 @@ $self.emoji($param.emoji)
 $result[]
 
 ^if(def $text){
-	^if(^text.match[</?[a-z]][i]){
+	
+	^if(!$inlineHTML && ^text.match[</?[a-z]][i]){
 		$text[^escapeTagBrackets[$text]]
+	}
+
+	^if($emoji){
+		^use[emoji-shortcuts.p]
+		$text[^emoji-shortcuts:parse[$text]]
+	}
+
+	^if($typograph){
+		^use[typograph.p]
+		$text[^typograph:parse[$text]]
 	}
 
 	$parts[^splitLines[$text]]
@@ -37,12 +54,6 @@ $result[]
 		}{
 			$result[$result^#0A]
 		}
-	}
-
-	^rem{ emoji }
-	^if($emoji){
-		^use[emoji-shortcuts.p]
-		$result[^emoji-shortcuts:parse[$result]]
 	}
 }
 ### End @parse
@@ -81,6 +92,7 @@ $result[$text]
 		}
 
 		^case[DEFAULT]{
+			^rem{ paragraph }
 			$result[<p>$result</p>]
 		}
 	}
@@ -93,6 +105,11 @@ $result[$text]
 
 
 #######################################
+# Parse inline styles and HTML
+#
+#	@param text {string} — markdown markup
+# $result {string} — markdown with parsed inline
+#
 @inLineRules[text]
 $result[$text]
 
@@ -122,26 +139,8 @@ $result[$text]
 
 	^rem{ inline code }
 	$result[^result.match[(?<!`)`([^^`]+?)`(?!`)][g]{<code>$match.1</code>}]
-
-	^rem{ copyright }
-	$result[^result.match[\([cс]\)][gi]{©}]
-
-	^rem{ trademark }
-	$result[^result.match[\(tm\)][gi]{<sup>™</sup>}]
-
-	^rem{ registered }
-	$result[^result.match[\(r\)][gi]{<sup>®</sup>}]
-
-	^rem{ ruble }
-	$result[^result.match[\([рp]\)][gi]{₽}]
-
-	^rem{ plus/minus }
-	$result[^result.match[\+/-][gi]{±}]
-
-	^rem{ dash }
-	$result[^result.match[-{2}(?>\s)][gi]{—}]
 }
-### End @rules
+### End @inLineRules
 
 
 #######################################
@@ -192,12 +191,14 @@ $result[$text]
 ^if(def $text){
 	$result[^result.match[<(/?[a-z][^^>]*?)>][g]{&lt^;$match.1&gt^;}]
 }
-### End @escapeTescapeTagBracketsags
+### End @escapeTagBrackets
 
 
 #######################################
 @auto[]
-$emoji(true)
+$emoji(1)
+$inlineHTML(0)
+$typograph(1)
 
 $hTag[
 	^rem{ italic }

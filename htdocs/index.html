@@ -64,7 +64,7 @@ $file[^file::load[text;test.md]]
 		<section>
 			<!-- Пример преобразования -->
 			$markdown[^markdown::create[
-				$.emoji(true)
+				$.emoji(1)
 			]]
 			^markdown.parse[^untaint{$file.text}]
 		</section>
