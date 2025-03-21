@@ -57,7 +57,7 @@ $hShortCuts[
 		$.emoji[😆]
 	]
 	$.neutral_face[
-		$.rules[:\||:-\|]
+		$.rules[(?<!-):\||:-\|]
 		$.emoji[😐]
 	]
 	$.open_mouth[

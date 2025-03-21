@@ -3,6 +3,7 @@
 
 @auto[]
 $file[^file::load[text;test.md]]
+$example[^file::load[text;example.p]]
 
 @main[]
 <!DOCTYPE html>
@@ -10,11 +11,16 @@ $file[^file::load[text;test.md]]
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Markdown Parser для Parser 3</title>
+	<title>Демо Markdown для Parser 3</title>
+	<meta name="description" content="демонстрация работы класса">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/parser3.min.js"></script>
 	<style>
 		body {
 			font-family: 'PT Sans','Arial',sans-serif;
 			font-size: 100%;
+			margin: 3em;
 		}
 		article {
 			width: 100%;
@@ -50,19 +56,24 @@ $file[^file::load[text;test.md]]
 	</style>
 </head>
 <body>
-	<h1>Markdown Parser для Parser 3</h1>
+	<h1>Демо Markdown для Parser 3</h1>
 	
-	<p>Преобразует Markdown разметку в HTML.</p>
+	<p>Преобразует Markdown разметку в HTML. Подробнее на <a href="https://github.com/spearance/markdown-p3">GitHub</a></p>
 
+	<pre><code>^untaint{$example.text}</code></pre>
+
+	<h2>Пример преобразования</h2>
 	<article>
 
-		<section class="pre">
-			<!-- Исходный текст -->
-			^untaint{$file.text}
+		<section>
+			<h3>Исходник</h3>
+			
+			<div class="pre">^untaint{$file.text}</div>
 		</section>
 
 		<section>
-			<!-- Пример преобразования -->
+			<h3>Результат</h3>
+
 			$markdown[^markdown::create[
 				$.emoji(1)
 			]]
@@ -70,5 +81,7 @@ $file[^file::load[text;test.md]]
 		</section>
 
 	</article>
+
+	<script>hljs.highlightAll();</script>
 </body>
 </html>

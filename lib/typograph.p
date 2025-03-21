@@ -26,6 +26,9 @@ $result[$text]
 	$result[^result.match[\+/-][gi]{±}]
 
 	^rem{ dash }
-	$result[^result.match[-{2}(?>\s)][gi]{—}]
+	$result[^result.match[(?<!-)-{2}(?>\s)][gi]{—}]
+
+	^rem{ hellip }
+	$result[^result.match[(?<!\.)\.{3}(?!\.)][gi]{…}]
 }
 ### End @parse
