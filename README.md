@@ -4,7 +4,7 @@
 
 ## Вызов
 
-```
+``` parser
 @USE
 markdown.p
 
@@ -13,9 +13,12 @@ markdown.p
 
 # или объект класса
 $markdown[^markdown::create[
-	$.inlineHTML(0)		# включать внутрь разметки HTML (не безопасно)
-	$.emoji(1)				# менять в тексте шорткаты на эмодзи 
-	$.typograph(1)		# заменять сочетания символов
+	^rem{ включать внутрь разметки HTML (не безопасно) }
+	$.inlineHTML(0)
+	^rem{ менять в тексте шорткаты на эмодзи }
+	$.emoji(1)
+	^rem{ заменять сочетания символов }
+	$.typograph(1)
 ]]
 
 ^markdown.parse[Text with [link](https://github.com "GitHub").]
