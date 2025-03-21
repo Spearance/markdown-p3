@@ -8,7 +8,17 @@
 @USE
 markdown.p
 
+# статически
 ^markdown:parse[Text with [link](https://github.com "GitHub").]
+
+# или объект класса
+$markdown[^markdown::create[
+	$.inlineHTML(0)		# включать внутрь разметки HTML (не безопасно)
+	$.emoji(1)				# менять в тексте шорткаты на эмодзи 
+	$.typograph(1)		# заменять сочетания символов
+]]
+
+^markdown.parse[Text with [link](https://github.com "GitHub").]
 ```
 
 ## Поддержка
