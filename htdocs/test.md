@@ -75,6 +75,12 @@ ___This is bold-italic text___
 >> ...by using additional greater-than signs right next to each other...
 > > > ...or with spaces between arrows.
 
+## Escaped chars
+
+Escaped 19 chars with back slash: \\ \` \* \_ \{ \} \[ \] \< \> \( \) \# \- \. \! \| \~ \=
+
+For example: `\`code\``
+
 ## Lists
 
 Unordered
