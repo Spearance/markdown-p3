@@ -1,6 +1,6 @@
 # markdown.p
 # v. 0.1.0
-# Evgeniy Lepeshkin, 2025-03-21
+# Evgeniy Lepeshkin, 2025-03-24
 
 @CLASS
 markdown
@@ -10,7 +10,7 @@ markdown
 #
 # @param param {hash} - preferences
 #
-#	$.emoji(1) - parse emoji shortcuts
+# $.emoji(1) - parse emoji shortcuts
 # $.innerHTML(0) - accept inline HTTML (not safe)
 # $.typograph(1) — use typograph replacement
 # 
@@ -24,7 +24,7 @@ $self.typograph(^if($param.typograph){$param.typograph}{1})
 #######################################
 # Parse markdown markup to HTML
 #
-#	@param text {string} — markdown markup
+# @param text {string} — markdown markup
 # $result {string} — HTML markup
 #
 @parse[text][parts]
@@ -35,6 +35,8 @@ $result[]
 	^if(!$innerHTML && ^text.match[</?[a-z]][i]){
 		$text[^escapeTagBrackets[$text]]
 	}
+
+	$text[^_remove[$text;escaped]]
 
 	^if($emoji){
 		^use[emoji-shortcuts.p]
@@ -55,6 +57,8 @@ $result[]
 			$result[$result^#0A]
 		}
 	}
+
+	$result[^_return[$result;escaped]]
 }
 ### End @parse
 
@@ -107,7 +111,7 @@ $result[$text]
 #######################################
 # Parse inline styles and HTML
 #
-#	@param text {string} — markdown markup
+# @param text {string} — markdown markup
 # $result {string} — markdown with parsed inline
 #
 @inLineRules[text]
@@ -195,10 +199,38 @@ $result[$text]
 
 
 #######################################
+# remove text structures
+@_remove[text;type][locals]
+$result[$text]
+
+^if(def $result){
+	$counter(0)
+	^hContainer.add[$.[$type][^hash::create[]]]
+	$result[^text.match[\\(^escaped.menu{^taint[regex][$escaped.char]}[|])][g]{╔╬╗^hContainer.[$type].add[$.[$counter][$match.1]]^counter.inc[]}]
+}
+### End @_remove
+
+
+########################################
+# return text structures
+@_return[text;type][locals]
+$counter(0)
+$result[$text]
+^if($hContainer.[$type]){
+	$result[^result.match[╔╬╗][g]{$hContainer.[$type].$counter^hContainer.[$type].delete[$counter]^counter.inc[]}]
+}
+### End @_return
+
+
+#######################################
 @auto[]
 $emoji(1)
 $innerHTML(0)
 $typograph(1)
+
+$hContainer[
+	$.escaped[]
+]
 
 $hTag[
 	^rem{ italic }
@@ -217,6 +249,29 @@ $hTag[
 		$.close[</em></strong>]
 	]
 ]
+
+$escaped[^table::create{char
+\
+`
+*
+_
+^{
+^}
+^[
+^]
+^(
+^)
+^#
+-
+.
+!
+|
+~
+=
+<
+>
+&lt^;
+&gt^;}]
 
 $tStarts[^table::create{char
 \n
