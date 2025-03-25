@@ -5,8 +5,8 @@
 @CLASS
 lang-highlight
 
-@GET_languages[]
-$result[^table::create{lang
+@auto[]
+$languages[^table::create{lang
 1c
 4d
 sap-abap
