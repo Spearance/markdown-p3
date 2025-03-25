@@ -1,13 +1,10 @@
 ---
 __Advertisement :)__
 
-- __[pica](https://nodeca.github.io/pica/demo/)__ - high quality and fast image
-  resize in browser.
-- __[babelfish](https://github.com/nodeca/babelfish/)__ - developer friendly
-  i18n with plurals <b>support</b> and easy syntax.
-
-* test 1
-* test 2
+- __[highlight.js](https://highlightjs.org/)__ - The Internet's favorite JavaScript syntax highlighter supporting
+   Node.js and the web.
+- __[Parser 3](https://github.com/nodeca/babelfish/)__ - simple and convenient object-oriented language
+  which allows creating good sites in short time.
 
 You will like those projects!
 
@@ -115,10 +112,10 @@ Inline `code`
 
 Indented code
 
-    // Some comments
-    line 1 of code
-    line 2 of code
-    line 3 of code
+	// Some comments
+	var foo = function (bar) {
+		return bar++;
+	};
 
 
 Block code "fences"
@@ -133,6 +130,8 @@ Syntax highlighting
 var foo = function (bar) {
   return bar++;
 };
+
+const b = 'text with\nnew line';
 
 console.log(foo(5));
 ```
@@ -156,17 +155,17 @@ Right aligned columns
 
 ## Links
 
-[link text](https://dev.nodeca.com)
+[link text](https://spearance.ru)
 
-[link with title (mouse over and wait)](http://nodeca.github.io/pica/demo/ "title text!")
+[link with title (mouse over and wait)](http://github.com/spearance/markdown-p3 "title text!")
 
-Autoconverted link https://github.com/nodeca/pica (enable linkify to see)
+Autoconverted link https://github.com/spearance (enable linkify to see)
 
 
 ## Images
 
 ![Minions](https://images.unsplash.com/photo-1515041219749-89347f83291a?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)
-![Stormtroopocat](https://octodex.github.com/images/stormtroopocat.jpg "The Stormtroopocat")
+![Stormtroopocat](https://www.parser.ru/f/1/ptic.gif "The Bird")
 
 Like links, Images also have a footnote style syntax
 
