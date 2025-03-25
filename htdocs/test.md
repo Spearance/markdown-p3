@@ -3,7 +3,7 @@ __Advertisement :)__
 
 - __[highlight.js](https://highlightjs.org/)__ - The Internet's favorite JavaScript syntax highlighter supporting
    Node.js and the web.
-- __[Parser 3](https://github.com/nodeca/babelfish/)__ - simple and convenient object-oriented language
+- __[Parser 3](https://parser.ru)__ - simple and convenient object-oriented language
   which allows creating good sites in short time.
 
 You will like those projects!
