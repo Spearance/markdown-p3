@@ -2,7 +2,7 @@
 __Advertisement :)__
 
 - __[highlight.js](https://highlightjs.org/)__ - The Internet's favorite JavaScript syntax highlighter supporting
-   Node.js and the web.
+  Node.js and the web.
 - __[Parser 3](https://parser.ru)__ - simple and convenient object-oriented language
   which allows creating good sites in short time.
 
@@ -159,13 +159,21 @@ Right aligned columns
 
 [link with title (mouse over and wait)](http://github.com/spearance/markdown-p3 "title text!")
 
-Autoconverted link https://github.com/spearance (enable linkify to see)
+Autoconverted link without formating  https://spearance.ru
+
+Disable Autoconverted link `https://github.com/spearance`
+
+### Email
+
+To quickly turn email address into a link, enclose it in angle brackets or without them.
+
+Write me: <mail@spearance.ru>
 
 
 ## Images
 
 ![Minions](https://images.unsplash.com/photo-1515041219749-89347f83291a?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)
-![Stormtroopocat](https://www.parser.ru/f/1/ptic.gif "The Bird")
+[![Some Alt attribute](https://www.parser.ru/f/1/ptic.gif "The Bird")](https://parser.ru)
 
 Like links, Images also have a footnote style syntax
 

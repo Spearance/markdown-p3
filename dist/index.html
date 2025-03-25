@@ -61,7 +61,7 @@
 	<h1>Демо Markdown для Parser 3</h1>
 	<p>Преобразует Markdown разметку в HTML. Подробнее на <a href="https://github.com/spearance/markdown-p3">GitHub</a>
 	</p>
-	<pre><code>@USE
+	<pre><code class="language-parser3">@USE
 markdown.p
 
 # статически
@@ -75,6 +75,8 @@ $markdown[^markdown::create[
 	$.emoji(1)
 	^rem{ заменять сочетания символов }
 	$.typograph(1)
+	^rem{ подсвечивать код }
+	$.highlight(1)
 ]]
 
 ^markdown.parse[Text with [link](https://github.com "GitHub").]
@@ -86,7 +88,7 @@ $markdown[^markdown::create[
 			<div class="pre">---
 __Advertisement :)__
 
-- __[highlight.js](https://highlightjs.org/)__ - The Internet's favorite JavaScript syntax highlighter
+- __[highlight.js](https://highlightjs.org/)__ - The Internet&apos;s favorite JavaScript syntax highlighter
 supporting
 Node.js and the web.
 - __[Parser 3](https://parser.ru)__ - simple and convenient object-oriented language
@@ -128,7 +130,7 @@ test.. test... test..... test?..... test!....
 
 !!!!!! ???? ,, -- ---
 
-"Smartypants, double quotes" and 'single quotes'
+&quot;Smartypants, double quotes&quot; and &apos;single quotes&apos;
 
 
 ## Emphasis
@@ -154,129 +156,137 @@ ___This is bold-italic text___
 
 ## Blockquotes
 
-> Blockquotes can also be nested...
->> ...by using additional greater-than signs right next to each other...
-> > > ...or with spaces between arrows.
+&gt; Blockquotes can also be nested...
+&gt;&gt; ...by using additional greater-than signs right next to each other...
+&gt; &gt; &gt; ...or with spaces between arrows.
 
 ## Escaped chars
 
-Escaped 19 chars with back slash: \\ \` \* \_ \{ \} \[ \] \< \> \( \) \# \- \. \! \| \~ \=
+Escaped 19 chars with back slash: \\ \` \* \_ \{ \} \[ \] \&lt; \&gt; \( \) \# \- \. \! \| \~ \=
 
-	For example: `\`code\``
+For example: `\`code\``
 
-	## Lists
+## Lists
 
-	Unordered
+Unordered
 
-	+ Create a list by starting a line with `+`, `-`, or `*`
-	+ Sub-lists are made by indenting 2 spaces:
-	- Marker character change forces new list start:
-	* Ac tristique libero volutpat at
-	+ Facilisis in pretium nisl aliquet
-	- Nulla volutpat aliquam velit
-	+ Very easy!
++ Create a list by starting a line with `+`, `-`, or `*`
++ Sub-lists are made by indenting 2 spaces:
+- Marker character change forces new list start:
+* Ac tristique libero volutpat at
++ Facilisis in pretium nisl aliquet
+- Nulla volutpat aliquam velit
++ Very easy!
 
-	Ordered
+Ordered
 
-	1. Lorem ipsum dolor sit amet
-	2. Consectetur adipiscing elit
-	3. Integer molestie lorem at massa
-
-
-	1. You can use sequential numbers...
-	1. ...or keep all the numbers as `1.`
-
-	Start numbering with offset:
-
-	57. foo
-	1. bar
+1. Lorem ipsum dolor sit amet
+2. Consectetur adipiscing elit
+3. Integer molestie lorem at massa
 
 
-	## Code
+1. You can use sequential numbers...
+1. ...or keep all the numbers as `1.`
 
-	Inline `code`
+Start numbering with offset:
 
-	Indented code
+57. foo
+1. bar
+
+
+## Code
+
+Inline `code`
+
+Indented code
 
 	// Some comments
 	var foo = function (bar) {
-	return bar++;
+		return bar++;
 	};
 
 
-	Block code "fences"
+Block code &quot;fences&quot;
 
-	```
-	Sample text here...
-	```
+```
+Sample text here...
+```
 
-	Syntax highlighting
+Syntax highlighting
 
-	``` js
-	var foo = function (bar) {
+``` js
+var foo = function (bar) {
 	return bar++;
-	};
+};
 
-	const b = 'text with\nnew line';
+const b = &apos;text with\nnew line&apos;;
 
-	console.log(foo(5));
-	```
+console.log(foo(5));
+```
 
-	## Tables
+## Tables
 
-	| Option | Description |
-	| ------ | ----------- |
-	| data | path to data files to supply the data that will be passed into templates. |
-	| engine | engine to be used for processing templates. Handlebars is the default. |
-	| ext | extension to be used for dest files. |
+| Option | Description |
+| ------ | ----------- |
+| data | path to data files to supply the data that will be passed into templates. |
+| engine | engine to be used for processing templates. Handlebars is the default. |
+| ext | extension to be used for dest files. |
 
-	Right aligned columns
+Right aligned columns
 
-	| Option | Description |
-	| ------:| -----------:|
-	| data | path to data files to supply the data that will be passed into templates. |
-	| engine | engine to be used for processing templates. Handlebars is the default. |
-	| ext | extension to be used for dest files. |
-
-
-	## Links
-
-	[link text](https://spearance.ru)
-
-	[link with title (mouse over and wait)](http://github.com/spearance/markdown-p3 "title text!")
-
-	Autoconverted link https://github.com/spearance (enable linkify to see)
+| Option | Description |
+| ------:| -----------:|
+| data | path to data files to supply the data that will be passed into templates. |
+| engine | engine to be used for processing templates. Handlebars is the default. |
+| ext | extension to be used for dest files. |
 
 
-	## Images
+## Links
 
-	![Minions](https://images.unsplash.com/photo-1515041219749-89347f83291a?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)
-	![Stormtroopocat](https://www.parser.ru/f/1/ptic.gif "The Bird")
+[link text](https://spearance.ru)
 
-	Like links, Images also have a footnote style syntax
+[link with title (mouse over and wait)](http://github.com/spearance/markdown-p3 &quot;title text!&quot;)
 
-	![Alt text][id]
+Autoconverted link without formating https://spearance.ru
 
-	With a reference later in the document defining the URL location:
+Disable Autoconverted link `https://github.com/spearance`
 
-	[id]: https://octodex.github.com/images/dojocat.jpg "The Dojocat"
+### Email
+
+To quickly turn email address into a link, enclose it in angle brackets or without them.
+
+Write me: &lt;mail@spearance.ru&gt;
 
 
-	### Emojies
+## Images
 
-	> Classic markup: :angry: :blush: :broken_heart: :confused: :cry: :frowning: :heart: :imp: :innocent: :joy:
-	:kissing: :laughing: :neutral_face: :open_mouth: :rage: :smile: :smiley: :smiling_imp: :sob:
-	:stuck_out_tongue: :sunglasses: :sweat: :sweat_smile: :unamused: :wink:
-	>
-	> Shortcuts (emoticons): :-) :-( 8-) ;) :'(
+![Minions](https://images.unsplash.com/photo-1515041219749-89347f83291a?fm=jpg&amp;q=60&amp;w=3000&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)
+[![Some Alt attribute](https://www.parser.ru/f/1/ptic.gif &quot;The Bird&quot;)](https://parser.ru)
 
-	### Abbreviations
+Like links, Images also have a footnote style syntax
 
-	This is HTML abbreviation example.
+![Alt text][id]
 
-	It converts "HTML", but keep intact partial entries like "xxxHTMLyyy" and so on.
+With a reference later in the document defining the URL location:
 
-	*[HTML]: Hyper Text Markup Language
+[id]: https://octodex.github.com/images/dojocat.jpg &quot;The Dojocat&quot;
+
+
+### Emojies
+
+&gt; Classic markup: :angry: :blush: :broken_heart: :confused: :cry: :frowning: :heart: :imp: :innocent: :joy:
+:kissing: :laughing: :neutral_face: :open_mouth: :rage: :smile: :smiley: :smiling_imp: :sob: :stuck_out_tongue:
+:sunglasses: :sweat: :sweat_smile: :unamused: :wink:
+&gt;
+&gt; Shortcuts (emoticons): :-) :-( 8-) ;) :&apos;(
+
+### Abbreviations
+
+This is HTML abbreviation example.
+
+It converts &quot;HTML&quot;, but keep intact partial entries like &quot;xxxHTMLyyy&quot; and so on.
+
+*[HTML]: Hyper Text Markup Language
 			</div>
 		</section>
 		<section>
@@ -360,7 +370,7 @@ var foo = function (bar) {
 			<p>Block code "fences"</p>
 			<pre><code>Sample text here…</code></pre>
 			<p>Syntax highlighting</p>
-			<pre><code>var foo = function (bar) {
+			<pre><code class="language-js">var foo = function (bar) {
   return bar++;
 };
 
@@ -385,26 +395,33 @@ console.log(foo(5));</code></pre>
 			<p><a href="https://spearance.ru">link text</a></p>
 			<p><a href="http://github.com/spearance/markdown-p3" title="title text!">link with title (mouse over and wait)</a>
 			</p>
-			<p>Autoconverted link https://github.com/spearance (enable linkify to see)</p>
+			<p>Autoconverted link without formating <a href="https://spearance.ru">https://spearance.ru</a></p>
+			<p>Disable Autoconverted link <code>https://github.com/spearance</code></p>
+			<h3>Email</h3>
+			<p>To quickly turn email address into a link, enclose it in angle brackets or without them.</p>
+			<p>Write me: <a href="mailto:mail@spearance.ru">mail@spearance.ru</a></p>
 			<h2>Images</h2>
 			<p><img
 					src="https://images.unsplash.com/photo-1515041219749-89347f83291a?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
 					alt="Minions"></p>
-			<p><img src="https://www.parser.ru/f/1/ptic.gif " The Bird"" alt="Stormtroopocat"></p>
+			<p><a href="https://parser.ru"><img src="https://www.parser.ru/f/1/ptic.gif" alt="Some Alt attribute"
+						title="The Bird"></a></p>
 			<p>Like links, Images also have a footnote style syntax</p>
 			<p>![Alt text][id]</p>
 			<p>With a reference later in the document defining the URL location:</p>
-			<p>[id]: https://octodex.github.com/images/dojocat.jpg "The Dojocat"</p>
+			<p>[id]: <a href="https://octodex.github.com/images/dojocat.jpg">https://octodex.github.com/images/dojocat.jpg</a>
+				"The Dojocat"</p>
 			<h3>Emojies</h3>
 			<blockquote> Classic markup: 😠 😊 💔 😕 😢 😦 ❤️ 👿 😇 😂 😗 😆 😐 😮 😡 😄 🙂 😈 😭 😛 😎 😓 😅 😒 😉\n>\n>
 				Shortcuts (emoticons): 🙂 😦 😎 😉 😢</blockquote>
 			<h3>Abbreviations</h3>
-			<p>This is HTML abbreviation example.</p>
-			<p>It converts "HTML", but keep intact partial entries like "xxxHTMLyyy" and so on.</p>
-			<p>*[HTML]: Hyper Text Markup Language</p>
+			<p>This is <abbr title="Hyper Text Markup Language">HTML</abbr> abbreviation example.</p>
+			<p>It converts "<abbr title="Hyper Text Markup Language">HTML</abbr>", but keep intact partial entries like
+				"xxxHTMLyyy" and so on.</p>
 		</section>
 	</article>
-	<script>hljs.highlightAll();</script>
+	<p>При разработке были использованы материалы <a href="https://www.markdownguide.org">markdownguide.org</a>
+		<script>hljs.highlightAll();</script>
 </body>
 
 </html>
