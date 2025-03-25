@@ -12,6 +12,8 @@ $markdown[^markdown::create[
 	$.emoji(1)
 	^rem{ заменять сочетания символов }
 	$.typograph(1)
+	^rem{ подсвечивать код }
+	$.highlight(1)
 ]]
 
 ^markdown.parse[Text with [link](https://github.com "GitHub").]

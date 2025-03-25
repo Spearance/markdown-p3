@@ -61,7 +61,7 @@ $example[^file::load[text;example.p]]
 	
 	<p>Преобразует Markdown разметку в HTML. Подробнее на <a href="https://github.com/spearance/markdown-p3">GitHub</a></p>
 
-	<pre><code>^untaint{$example.text}</code></pre>
+	<pre><code class="language-parser3">^untaint{$example.text}</code></pre>
 
 	<h2>Пример преобразования</h2>
 	<article>
@@ -69,7 +69,7 @@ $example[^file::load[text;example.p]]
 		<section>
 			<h3>Исходник</h3>
 			
-			<div class="pre">^untaint{$file.text}</div>
+			<div class="pre">^untaint[html]{$file.text}</div>
 		</section>
 
 		<section>
@@ -77,11 +77,14 @@ $example[^file::load[text;example.p]]
 
 			$markdown[^markdown::create[
 				$.emoji(1)
+				$.highlight(1)
 			]]
 			^markdown.parse[^untaint{$file.text}]
 		</section>
 
 	</article>
+
+	<p>При разработке были использованы материалы <a href="https://www.markdownguide.org">markdownguide.org</a>
 
 	<script>hljs.highlightAll();</script>
 </body>

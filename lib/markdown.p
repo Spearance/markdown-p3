@@ -23,7 +23,7 @@ $self.highlight(^if($param.highlight){$param.highlight}{0})
 
 ^if($self.highlight){
 	^use[lang-highlight.p]
-	$tHighlight[$lang-highlight.languages]
+	$tHighlight[^table::create[$lang-highlight:languages]]
 }
 ### End @create
 
@@ -41,6 +41,10 @@ $result[]
 	
 	^if(!$innerHTML && ^text.match[</?[a-z]][i]){
 		$text[^escapeTagBrackets[$text]]
+	}
+
+	^if(^text.match[\*\^[[A-ZА-ЯЁ]+\^]:]){
+		$text[^addAbbreviation[$text]]
 	}
 
 	$text[^_remove[$text;escaped]]
@@ -149,13 +153,24 @@ $result[$text]
 	$result[^result.match[(?<!\b)(\={2}\b)([^^+]+?)\1(?!\b)][g]{<mark>$match.2</mark>}]
 
 	^rem{ image }
-	$result[^result.match[\!\^[([^^^]]+)\^]\(([^^)]+)\)][g]{<img src="$match.2" alt="^taint[html][$match.1]">}]
+	$result[^result.match[\!\^[([^^^]]+)\^]\(([^^)]+?)(?:\s"([^^"]+?)")?\)][g]{<img src="$match.2" alt="^taint[html][$match.1]"^if(def $match.3){title="^taint[html][$match.3]"}>}]
+
+	^rem{ email }
+	$result[^result.match[(?<![="]mailto:)(?:&lt^;|<)?([-\w.]+@[-\w.]+\.\w{2,15})(?:&gt^;|>)?][gi]{<a href="mailto:$match.1">$match.1</a>}]
 
 	^rem{ link }
-	$result[^result.match[\^[([^^^]]+)\^]\(([^^)]+?)(?:\s"([^^"]+?)")?\)][g]{<a href="$match.2"^if(def $match.3){ title="^taint[html][$match.3]"}>$match.1</a>}]
+	$result[^result.match[\^[([^^^]]+)\^]\(([^^)]+?)(?:\s"([^^"]+?)")?\)][gi]{<a href="$match.2"^if(def $match.3){ title="^taint[html][$match.3]"}>$match.1</a>}]
+	$result[^result.match[(?<![="`])((?:https?://|ftp://|mailto:)(?:[:\w~%{}\./?=&@,#-]+))][gi]{<a href="$match.1">$match.1</a>}]
 
 	^rem{ inline code }
 	$result[^result.match[(?<!`)`([^^`]+?)`(?!`)][g]{<code>$match.1</code>}]
+
+	^rem{ abbr }
+	^if($tAbbreviation){
+		^tAbbreviation.menu{
+			$result[^result.match[(?<!\.)\b^taint[regex][$tAbbreviation.abbr]\b][g]{<abbr title="^taint[html][$tAbbreviation.title]">$tAbbreviation.abbr</abbr>}]
+		}
+	}
 }
 ### End @inLineRules
 
@@ -180,59 +195,72 @@ $result[^table::create{piece	type	cnt}]
 		^temp.offset(-1)
 		$cnt(0)
 
-		^while($type eq $Types.CITE && $nextType eq $Types.CITE && ^temp.line[] < ^temp.count[]){
-
-			^temp.offset(1)
-			$nextType[^checkType[$temp.piece]]
-			$piece[$piece^if($nextType eq $Types.CITE){$Types.NL}$temp.piece]
-			^temp.delete[]
-			^temp.offset(-1)
-		}
-
-		^while($type eq $Types.FENCE && $nextType ne $Types.FENCE && ^temp.line[] < ^temp.count[]){
-			^temp.offset(1)
-			$nextType[^checkType[$temp.piece]]
-			$piece[$piece^if($nextType ne $Types.FENCE){$Types.NL}$temp.piece]
-			^temp.delete[]
-			^temp.offset(-1)
-		}
-
-		^while($type eq $Types.CODE && $nextType eq $Types.CODE && ^temp.line[] < ^temp.count[]){
-			^temp.offset(1)
-			$nextType[^checkType[$temp.piece]]
-			$piece[$piece^if($nextType eq $Types.CODE){$Types.NL}$temp.piece]
-			^temp.delete[]
-			^temp.offset(-1)
-		}
-
-		^while($type eq $Types.UL && ($nextType eq $Types.UL || $nextType eq $Types.P) && ^temp.line[] < ^temp.count[]){
-			^temp.offset(1)
-			$nextType[^checkType[$temp.piece]]
-			$piece[$piece^if($nextType eq $Types.UL){$Types.NL}($nextType eq $Types.P){<$Types.BR>}$temp.piece]
-			^temp.delete[]
-			^temp.offset(-1)
-		}
-
-		^while($type eq $Types.OL && ($nextType eq $Types.OL || $nextType eq $Types.P) && ^temp.line[] < ^temp.count[]){
-			^temp.offset(1)
-			$nextType[^checkType[$temp.piece]]
-			$piece[$piece^if($nextType eq $Types.OL){$Types.NL}($nextType eq $Types.P){<$Types.BR>}$temp.piece]
-			^temp.delete[]
-			^temp.offset(-1)
-		}
-
-		^while($type eq $Types.BR && $nextType eq $Types.BR && ^temp.line[] < ^temp.count[]){
-			^temp.offset(1)
-			$nextType[^checkType[$temp.piece]]
-			^if($nextType eq $Types.BR){
-				^temp.delete[]
+		^switch[$type]{
+			^case[$Types.CITE]{
+				^while($nextType eq $Types.CITE && ^temp.line[] < ^temp.count[]){
+					^temp.offset(1)
+					$nextType[^checkType[$temp.piece]]
+					$piece[$piece^if($nextType eq $Types.CITE){$Types.NL}$temp.piece]
+					^temp.delete[]
+					^temp.offset(-1)
+				}
 			}
-			^temp.offset(-1)
-			^cnt.inc[]
-		}
 
-		^if($type eq $Types.HR){
-			$piece[]
+			^case[$Types.FENCE]{
+				^while($nextType ne $Types.FENCE && ^temp.line[] < ^temp.count[]){
+					^temp.offset(1)
+					$nextType[^checkType[$temp.piece]]
+					$piece[$piece^if($nextType ne $Types.FENCE){$Types.NL}$temp.piece]
+					^temp.delete[]
+					^temp.offset(-1)
+				}
+			}
+
+			^case[$Types.CODE]{
+				^while($nextType eq $Types.CODE && ^temp.line[] < ^temp.count[]){
+					^temp.offset(1)
+					$nextType[^checkType[$temp.piece]]
+					$piece[$piece^if($nextType eq $Types.CODE){$Types.NL}$temp.piece]
+					^temp.delete[]
+					^temp.offset(-1)
+				}
+			}
+
+			^case[$Types.UL]{
+				^while(($nextType eq $Types.UL || $nextType eq $Types.P) && ^temp.line[] < ^temp.count[]){
+					^temp.offset(1)
+					$nextType[^checkType[$temp.piece]]
+					$piece[$piece^if($nextType eq $Types.UL){$Types.NL}($nextType eq $Types.P){<$Types.BR>}$temp.piece]
+					^temp.delete[]
+					^temp.offset(-1)
+				}
+			}
+
+			^case[$Types.OL]{
+				^while(($nextType eq $Types.OL || $nextType eq $Types.P) && ^temp.line[] < ^temp.count[]){
+					^temp.offset(1)
+					$nextType[^checkType[$temp.piece]]
+					$piece[$piece^if($nextType eq $Types.OL){$Types.NL}($nextType eq $Types.P){<$Types.BR>}$temp.piece]
+					^temp.delete[]
+					^temp.offset(-1)
+				}
+			}
+
+			^case[$Types.BR]{
+				^while($nextType eq $Types.BR && ^temp.line[] < ^temp.count[]){
+					^temp.offset(1)
+					$nextType[^checkType[$temp.piece]]
+					^if($nextType eq $Types.BR){
+						^temp.delete[]
+					}
+					^temp.offset(-1)
+					^cnt.inc[]
+				}
+			}
+
+			^case[$Types.HR]{
+				$piece[]
+			}
 		}
 
 		^if(($type eq $Types.P || $type eq $Types.H || $type eq $Types.HR) && $nextType eq $Types.BR){
@@ -313,6 +341,17 @@ $result[$text]
 
 
 #######################################
+# Add abbreviation table rows
+@addAbbreviation[text]
+$result[$text]
+
+^if(def $result){
+	$result[^result.match[^^\*\^[([A-ZА-ЯЁ]+)\^]: (.+)(?:\n|^$)][gm]{^tAbbreviation.append[$.abbr[$match.1]$.title[$match.2]]}]
+}
+### End @addAbbreviation
+
+
+#######################################
 # remove text structures
 @_remove[text;type][locals]
 $result[$text]
@@ -341,9 +380,11 @@ $result[$text]
 $emoji(1)
 $innerHTML(0)
 $typograph(1)
+$highlight(0)
 
 # line types
 $Types[
+	$.ABBR[abbr]
 	$.BR[br]
 	$.CITE[cite]
 	$.CODE[code]
@@ -407,4 +448,7 @@ _
 
 # highlighted languages
 $tHighlight[^table::create{lang}]
+
+# abbreviation
+$tAbbreviation[^table::create{abbr	title}]
 ### End @auto
