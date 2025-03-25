@@ -261,7 +261,7 @@ $result[]
 ^if(!def $text){
 	$result[$Types.BR]
 }{
-	^if(^text.match[^^[-_*]{3,}]){
+	^if(^text.match[^^[-_*]{3,}^$]){
 		$result[$Types.HR]
 	}(^text.match[^^^#{1,6}]){
 		$result[$Types.H]
