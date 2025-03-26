@@ -1,5 +1,5 @@
 /cgi-bin/
-/lib/Debug.p
+/Debug.p
 
 .DS_Store
 *.scssc

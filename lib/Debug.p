@@ -1,366 +1,402 @@
-@dstop[o]
-	^if(^Debug:isDeveloper[]){
-		^process[$MAIN:CLASS]{@unhandled_exception[hException^;tStack]^#0A^^Debug:exception[^$hException^;^$tStack]}
-		^if($o is double){ ^Debug:stop($o) }{ ^Debug:stop[$o] }
-	}
-	$result[]
+# Parser Debug Library
+# Copyright Art. Lebedev | http://www.artlebedev.ru/
+# Author: vlalek, gregory
+# Updated: 2016-09-29
 
-@dshow[o][result]
-	^if(^Debug:isDeveloper[] && (!def $form:mode || $form:mode ne xml)){
-		^if($o is double){ ^Debug:show($o) }{ ^Debug:show[$o] }
-	}
 
-@dcompact[h][result]
-	^Debug:compact[^hash::create[$h]]
+@dstop[*o]
+$result[^debug:_stop[$o]]
+
+
+@dshow[*o]
+$result[^debug:_show[$o]]
+
 
 @CLASS
-Debug
+debug
+
+@OPTIONS
+locals
+
 
 @auto[]
-#	$self.bDeveloper(^env:REMOTE_ADDR.match[^^87\.254\.136\.170]))
-	$self.bDeveloper(true)
-	$self.tReplacePath[^table::create[nameless]{^if(def $env:DOCUMENT_ROOT){$env:DOCUMENT_ROOT	&#8230^;/}}]
-	$self.sSavePath[/../data/log/debug.html]
-	$self.hStatistics[
-		$.iCalls(0)
-		$.iCompact(0)
-		$.hUsage[
-			$.hBegin[$status:rusage]
-		]
-		$.hMemory[
-			$.iEnd(0)
-			$.iCollected(0)
-			$.iBegin($status:memory.used)
-		]
-		$.fStartTime($status:rusage.tv_sec+$status:rusage.tv_usec/1000000)
+$self.long_string_length(1500)
+$can[$MAIN:isDeveloper]
+^if($can is junction){
+	$self.can(^can[])
+}(def $can){
+	$self.can($can)
+}{
+	$self.can(true)
+}
+$self.status[
+	$.usage[
+		$.begin[$status:rusage]
 	]
-
-	$self.sConsole[^self.getStyle[]]
-
-	$self.iTabSize(4)
-
-	$self.iLimit(16384)
-	$self.iCall(0)
-	$self.iHashId(0)
-
-	$self.iShift(0)
-
-@isDeveloper[][result]
-	$result($bDeveloper)
-
-@exception[hException;tStack]
-	$response:status(500)
-	$response:content-type[
-		$.value[text/html]
-		$.charset[$response:charset]
+	$.memory[
+		$.end(0)
 	]
-	<style type="text/css" media="screen">
-		body{background-color:#f5f5f5;font-size:100%;margin:0;padding: 0}
-	</style>
-	<div id="_D">
-		^if($hException.type eq debug){
-			^taint[optimized-as-is][$hException.source]
+]
+$self._processed[^hash::create[]]
+
+
+@stop[*o]
+$result[^self._stop[$o]]
+
+
+@show[*o]
+$result[^self._show[$o]]
+
+
+@_stop[o]
+^if($self.can){
+	^process[$MAIN:CLASS]{@unhandled_exception[exception^;stack]^#0a^^debug:_exception[^$exception^;^$stack]}
+	$result[^self._show[$o]^throw[debug;$self.console]]
+}{
+	$result[]
+}
+
+
+@_show[o][result]
+^if($self.can){
+	^if(!$self.called){
+		^if($MAIN:postprocess is junction){
+			$debug:_original_postprocess[$MAIN:postprocess]
+		}
+		$t[^process[$MAIN:CLASS]{@postprocess[result]^#0a^$result[^^debug:_postprocess[^$result]]}]
+		$self.called(true)
+	}
+	$self.status.memory.end($status:memory.used)
+	$self.status.usage.end[$status:rusage]
+	$usage((^self.status.usage.end.tv_sec.double[] - ^self.status.usage.begin.tv_sec.double[]) + (^self.status.usage.end.tv_usec.double[] - ^self.status.usage.begin.tv_usec.double[])/1000000)
+	$utime($self.status.usage.end.utime - $self.status.usage.begin.utime)
+
+	^if(!($o is hash)){$o[$.void[$o]]}
+
+	$self.console[$self.console
+<div class="parser_debug_show"><table><tr>^o.foreach[k;v]{<td><pre>^if($v is double){^self._show_double[$v;](true)}{^self.__show[$v;](true)}</pre></td>}[<td class="parser_debug_separator"></td>]</tr></table>
+
+<b>memory used: $self.status.memory.end KB, usage: ^usage.format[%.3f] s, utime: ^utime.format[%.3f] s^if(def $self.status.prev){ ^($f($self.status.memory.end - $self.status.prev.memory)$f KB, $f($usage - $self.status.prev.usage)^f.format[%.3f] s, $f($utime - $self.status.prev.utime)^f.format[%.3f] s^)}</b></div>
+	]
+	$self.status.prev[
+		$.memory($self.status.memory.end)
+		$.usage($usage)
+		$.utime($utime)
+	]
+}
+
+
+@__show[o;indent;root]
+^if($debug:[_show_$o.CLASS_NAME] is junction){
+	$result[^debug:[_show_$o.CLASS_NAME][$o;$indent;$root]]
+}{
+	$result[^debug:_show_DEFAULT[$o;$indent;$root]]
+}
+
+
+@_show_junction[o;i;root]
+$result[^self._show_OUTER[^{;;;<b title="junction">junction</b>;;^};$root]]
+
+
+@_show_double[o;i;root]
+$result[^self._show_OUTER[^(;;;<u title="double">$o</u>;;^);$root]]
+
+
+@_show_bool[o;i;root]
+$result[^self._show_OUTER[^(;;;<b title="bool">^if($o){true}{false}</b>;;^);$root]]
+
+
+@_show_string[o;i;root]
+$s[^o.match[<;g;&lt^;]]
+$result[^self._show_OUTER[^[;;;^if(^o.length[] > $self.long_string_length){<ins><tt>^taint[as-is][$s]</tt></ins>}{<tt>^taint[as-is][$s]</tt>};;^];$root]]
+
+
+@_show_date[o;i;root]
+$result[^self._show_OUTER[^[;date;^[;${o.year}-^o.month.format[%02d]-^o.day.format[%02d] ^o.hour.format[%02d]:^o.minute.format[%02d]:^o.second.format[%02d]</b>;^];^];$root]]
+
+
+@_show_file[o;i;root]
+$s[^file:fullpath[$o.name]]
+$result[^self._show_OUTER[^[;;;<u title="file: $o.mode, $o.size B">^if(def $s){$s}{file}</u>;;^];$root]]
+
+
+@_show_image[o;i;root]
+^if(!def $o.src){
+	$result[^self._show_OUTER[^[;image;^[;;^];^];$root]]
+}{
+	$result[^self._show_OUTER[^[;;;<img src="$o.src" alt="" title="$o.src $o.width&times^;$o.height"/>;;^];$root]]
+}
+
+
+@_show_void[o;i;root]
+$result[^self._show_OUTER[^[;;;<u>void</u>;;^];$root]]
+
+
+@_show_table[o;i;root]
+$c[^o.columns[]]
+^if(!$c){
+	$n[[nameless]]
+	$t[^o.flip[]]
+	$ii(^t.count[] - 1)
+	$c[^table::create{column}]
+	^for[i](0;$ii){^c.append{$i}}
+}
+$result[^self._show_OUTER[^[;table;$n^{;<ins><table border="1" class="parser_debug_table">^if(!$t){
+	<tr>^c.menu{<th>$c.column</th>}</tr>}
+	^o.menu{<tr>^c.menu{<td>$s[$o.fields.[$c.column]]^s.match[<;g;&lt^;]</td>}</tr>}
+</table></ins>;^};^];$root]]
+
+
+@_show_regex[o;i;root]
+$result[^self._show_OUTER[^[;regex;^[;$o.pattern^;$o.options;^];^];$root]]
+
+
+@_show_xdoc[o;i;root]
+$s[^self.xml_string[^o.string[$.omit-xml-declaration[no] $.method[xml] $.indent[yes]]]]
+$result[^self._show_OUTER[^[;xdoc;^{;<ins>^s.match[<;g;&lt^;]</ins>;^};^];$root]]
+
+
+@_show_xnode[o;i;root]
+$result[^self._show_OUTER[^[;;;<u title="xnode">^self.xnode_string[$o]</u>;;^];$root]]
+
+
+@xnode_string[o]
+^switch[$o.nodeType]{
+	^case[1]{
+		$a[^o.select[@*]]
+		$a[^a.foreach[k;v]{^self.xnode_string[$v]}]
+		$c[^o.select[* | text()]]
+		$c[^c.foreach[k;v]{^self.xnode_string[$v]}]
+		$result[&lt^;${o.nodeName}$a^if(!def $c){/&gt^;}{&gt^;$c&lt^;/$o.nodeName&gt^;}]
+	}
+	^case[2]{$result[^#20$o.nodeName="^self.xml_string[^apply-taint[xml][$o.nodeValue]]"]}
+	^case[DEFAULT]{$result[^self.xml_string[^apply-taint[xml][$o.nodeValue]]]}
+}]
+
+
+@xml_string[result]
+$result[^result.match[&;g;&amp^;]]
+
+
+@_show_hash[o;indent;root]
+$s[^self._show_OBJECT[$o;$indent]]
+$result[^self._show_OUTER[^[;^if(!def $s){hash};^[;$s;^];^];$root]]
+
+
+@_show_DEFAULT[o;indent;root]
+$result[^self._show_OUTER[^[;$o.CLASS_NAME;^[;^self._show_OBJECT[^reflection:fields[$o];$indent];^];^];$root]]
+
+
+@_show_OUTER[prefix;class_name;p;value;s;suffix;root]
+$result[^if(!$root){$prefix}^if(def $class_name){<u>^^${class_name}::create</u>$p}$value^if(def $class_name){$s}^if(!$root){$suffix}]
+
+
+@_show_OBJECT[o;indent]
+$result[]
+$keys[^o._keys[]]
+$ouid[^reflection:uid[$o]]
+^if(!^self._processed.contains[$ouid]){
+	$self._processed.$ouid[root]
+}
+^keys.menu{
+	$k[$keys.key]
+	$result[$result^taint[as-is][^#0a$indent^#09]<a>^$.^if(^k.match[[-.\s^;\^]^}^)"<>#+*/%&|=!',?]]){[$k]}{$k}</a>]
+	^try{
+		^if($o.$k is double){
+			$v($o.$k)
 		}{
-			<pre>^untaint[html]{ $hException.comment }</pre>
-			^if(def $hException.source){
-				<b>$hException.source</b><br>
-				<pre>^untaint[html]{$hException.file^($hException.lineno^)}</pre>
-			}
-			^if(def $hException.type){ exception.type=$hException.type }
+			$v[$o.$k]
 		}
-		^if($tStack is table){
-			<hr/>
-			<table id="_dStack">
-			^tStack.menu{
-				^if($hException.type eq debug && ^tStack.line[] < 4 && $tStack.name ne rem){}{<tr><th>^^$tStack.name</th><td>^file:dirname[^if(def $tStack.file){^tStack.file.replace[$self.tReplacePath]}]/<i>^file:basename[$tStack.file] ^[$tStack.lineno^]</i><sup>$tStack.colno</sup></td></tr>}
+		^if($v is double){
+			$result[$result^self.__show($v)]
+		}(!($v is junction)){
+			$uid[^reflection:uid[$v]]
+			^if(!^self._processed.contains[$uid]){
+				$self._processed.$uid[ancestor property ^$.$k]
+				$result[$result^self.__show[$v;$indent^#09]]
+				^self._processed.delete[$uid]
+			}{
+				$result[${result}^[<b>UID: $uid was in $self._processed.$uid</b>^]]
 			}
-			</table>
+		}{
+			$result[$result^self.__show[$v;$indent^#09]]
 		}
+	}{
+		$exception.handled(true)
+		$result[${result}^{<b title="junction">junction</b>^}]
+	}
+}
+^if($o){
+	$l(^indent.length[])
+	$result[<ins>$result^taint[as-is][^#0a$indent]</ins>]
+}
+^self._processed.delete[$ouid]
+
+
+@_postprocess[result]
+^if($debug:_original_postprocess is junction){
+	$result[^debug:_original_postprocess[$result]]
+}
+^if($response:[content-type] is string){
+	$type[$response:[content-type]]
+}{
+	$type[$response:[content-type].value]
+}
+^if($debug:called && ($type eq "text/html" || !^type.match[/(xml|json)])){
+	$result[^result.match[(^^.*<(?:html|body)[^^>]*>)?][i]{$match.1^debug:_outer_html[$debug:console]}]
+}
+
+
+@_exception[exception;stack]
+$response:status(500)
+$response:content-type[
+	$.value[text/html]
+	$.charset[$response:charset]
+]
+^self._outer_html[
+	^if($exception.type eq debug){
+		^untaint{$exception.source}
+	}{
+		<pre>^untaint[html]{ $exception.comment }</pre>
+		^if(def $exception.source){
+			<b>$exception.source</b><br>
+			<pre>^untaint[html]{$exception.file^($exception.lineno^)}</pre>
+		}
+		^if(def $exception.type){ exception.type=$exception.type }
+	}
+	^if($stack is table){
+		<hr/>
+		<table class="parser_debug_stack">
+		^stack.menu{
+			^if($exception.type eq debug && ^stack.line[] < 5 && $stack.name ne rem){}{<tr><th>^^$stack.name</th><td>^file:dirname[$stack.file]/<b>^file:basename[$stack.file] [$stack.lineno]</b> [$stack.colno]</td></tr>}
+		}
+		</table>
+	}
 	</div>
-
-
-
-@extendPostprocess[]
-	^if($MAIN:postprocess is junction){
-		$MAIN:jOriginalPostprocess[$MAIN:postprocess]
-	}
-	^process[$MAIN:CLASS]{@postprocess[body][result]
-		^^if(^$MAIN:jOriginalPostprocess is junction){
-			^$body[^^MAIN:jOriginalPostprocess[^$body]]
-		}
-		^^if(^$Debug:iCall){
-			^$result[^^body.match[(<body[^^^^>]*>)?][i]{^$match.1<div style="display:none" id="_D">^^Debug:getScript^[^]^$Debug:sConsole</div>}]
-		}
-	}
-
-@getScript[]
-<script>
-function Debug_Toggle(s) {
-	var o = document.getElementById(s);
-	if(o) o.style.display = o.style.display == '' ? 'none' : '';
-}
-function Debug_Console_Js(top) { this.construct(window) }
-Debug_Console_Js.prototype = {
-	height: 400,
-	construct: function(t) { with (this) {
-		top = t || window;
-		var owner = window.HTMLElement? window : body;
-		var th = this;
-		var prevKeydown = owner.onkeydown;
-		owner.onkeydown = function(e) {
-			if (!e) e = window.event;
-			if ((e.ctrlKey || e.metaKey) && (e.keyCode == 192 || e.keyCode == 96 || e.keyCode == 191)) {
-				th.toggle();
-				return false;
-			}
-			if (prevKeydown) {
-				this.__prev = prevKeydown;
-				return this.__prev(e);
-			}
-		}
-	}},
-	toggle: function() { with (this) {
-		Debug_Toggle('_D');
-	}}
-}
-window.hackerConsole = window.hackerConsole || window.Debug_Console_Js && new window.Debug_Console_Js();
-</script>
-
-@getStyle[]
-<style type="text/css">
-	/* светлая сторона */
-	#_D{background:#f5f5f5;color:#444;font-family:courier new;font-size:12px;position:relative;z-index:99999;padding:1em 1em .2em}
-	#_D #_dStack i{color:#000;font-style:normal}
-	#_D #_dStack td{color:#999}
-	#_D #_dStack th{color:#35d;padding-right:1em;text-align:left}
-	#_D .ancor{color:#0096ff;cursor:hand}
-	#_D .bool{color:#4dc6de;font-weight:700}
-	#_D .date{color:#f50}
-	#_D .hash{color:#666}
-	#_D .numeric{color:#03f}
-	#_D .string{color:#669;white-space:pre}
-	#_D .userclass{color:#06d}
-	#_D .void{color:#aaa}
-	#_D b{font-weight:400}
-	#_D code{color:#000}
-	#_D del{position:absolute;text-decoration:none;top:-1000em}
-	#_D dfn{color:#06f;display:block;font-style:normal;margin-bottom:1em}
-	#_D em{color:#555;font-style:normal}
-	#_D hr{background:#999;border:0;color:#999;height:1px;width:100%;margin:.5em 0 1em}
-	#_D pre{margin:.5em 0 1.8em;padding:0;overflow:visible;width:100%}
-	#_D pre.xdoc,#_D pre.file{margin:0}
-	#_D s{color:#555;text-decoration:none}
-	#_D samp{white-space:pre}
-	#_D table{font-size:1em}
-	#_D table.table{border-collapse:collapse;margin:6px 3px 0}
-	#_D table.table td,#_D table.table th{border:1px dotted #999;padding:2px 5px}
-	#_D table.table th{color:#555}
-	#_D var{color:#d30;font-style:normal;font-weight:400;text-decoration:none}
-
-/* темная сторона */
-#_D{background:#0c1021;color:silver;font-family:courier new;font-size:12px;padding:1em;position:relative;z-index:99999}#_D #_dStack i{color:#ccc;font-style:normal}#_D #_dStack td{color:#777}#_D #_dStack th{color:#fbdc2d;padding-right:1em;text-align:left}#_D .ancor{color:#0096ff;cursor:hand}#_D .bool{color:#4dc6de;font-weight:700}#_D .date{color:#f50}#_D .hash{color:#aaa}#_D .numeric{color:#d8fa3c}#_D .string{color:#df8644;white-space:pre}#_D .userclass{color:#0096ff}#_D .void{color:#666}#_D b{font-weight:400}#_D del{color:#333;position:absolute;text-decoration:none;top:-1000em}#_D dfn{color:#69f;display:block;font-style:normal;margin-bottom:1em}#_D em{color:#555;font-style:normal}#_D hr{background:#666;border:0;color:#666;height:1px;margin:.5em 0 1em;width:100%}#_D pre{margin:.5em 0 1.4em}#_D pre.xdoc{margin:0}#_D s{color:#555;text-decoration:none}#_D samp{white-space:pre}#_D table{font-size:1em}#_D table.table{border-collapse:collapse;margin:6px 3px 0}#_D table.table td,#_D table.table th{border:1px dotted #666;padding:2px 5px}#_D table.table th,#_D code{color:#6cb649}#_D var{color:#ff6400;font-style:normal;font-weight:400;text-decoration:none}
-</style>
-<dfn>
-	$dNow[^date::now[]]
-	${dNow.hour}:^dNow.minute.format[%.02u]:^dNow.second.format[%.02u]&nbsp
-	<em>[^if(def $env:REMOTE_HOST && $env:REMOTE_HOST ne $env:REMOTE_ADDR){REMOTE_ADDR: $env:REMOTE_ADDR REMOTE_HOST: $env:REMOTE_HOST}{$env:REMOTE_ADDR}]&nbsp
-	^env:PARSER_VERSION.match[compiled on ][]{}</em>&nbsp
-	^rem{ посчитать параметры запроса }
-	$uriParam[^request:uri.match[^^[^^\?]*\??(.*)?][]{$match.1}]
-	$uriParam[^uriParam.split[&]]
-	$uriParamReal(0)
-	^if($form:tables is hash){^form:tables.foreach[key;val]{^uriParamReal.inc(^val.count[])}}
-	$queryParam[$request:query]
-	$queryParam[^queryParam.split[&]]
-	$queryParamCount(^queryParam.count[]-^uriParam.count[])
-	post/get/query: ^eval($uriParamReal-^queryParam.count[])/^uriParam.count[]/$queryParamCount&nbsp
-	^if($cookie:fields){cookie: ^cookie:fields._count[]}
-</dfn>
-<hr/>
-
-@compact[hParam][iPrevUsed;result]
-^hStatistics.iCalls.inc(1)
-^if($hParam.bForce || !$hStatistics.hMemory.iEnd || ($self.iLimit && ($status:memory.used - $hStatistics.hMemory.iEnd) > $self.iLimit)){
-	^hStatistics.iCompact.inc(1)
-	$iPrevUsed($status:memory.used)
-	^memory:compact[]
-	^hStatistics.hMemory.iCollected.inc($iPrevUsed - $status:memory.used)
-	$hStatistics.hMemory.iEnd($status:memory.used)
-}
-
-@showSystemParam[][result]
-$self.hStatistics.hMemory.iEnd($status:memory.used)
-$self.hStatistics.hUsage.hEnd[$status:rusage]
-$usage((^self.hStatistics.hUsage.hEnd.tv_sec.double[] -
-				^self.hStatistics.hUsage.hBegin.tv_sec.double[]) +
-				(^self.hStatistics.hUsage.hEnd.tv_usec.double[] -
-				^self.hStatistics.hUsage.hBegin.tv_usec.double[])/1000000)
-$utime($self.hStatistics.hUsage.hEnd.utime - $self.hStatistics.hUsage.hBegin.utime)
-$result[<code>
-	memory used/collected: $self.hStatistics.hMemory.iEnd/$self.hStatistics.hMemory.iCollected KB
-	calls/dcompacts: $self.hStatistics.iCalls/$self.hStatistics.iCompact
-	Usage: ^usage.format[%.3f] s,
-	Utime: ^utime.format[%.3f] s
-</code>]
-
-@show[o][result]
-^if(!$self.iCall){^extendPostprocess[]}
-$self.iCall(1)
-$sConsole[$sConsole
-^showSystemParam[]
-<pre>^taint[optimized-as-is][^if($o is double){^showObject($o)}{^showObject[$o]}]</pre>
 ]
 
-@stop[o][result]
-^if($o is double){ ^self.show($o) }{ ^self.show[$o] }
-#^sConsole.save[$self.sSavePath]
-^throw[debug;$sConsole]
 
-@showObject[o][result;jShow]
-^iHashId.inc[]
-^if(def $o){
-	$jShow[$[show_$o.CLASS_NAME]]
-	^if($jShow is junction){
-		^if($o is double){^jShow($o)}{^jShow[$o]}
-	}{
-		^show_userclass[$o]
-	}
-}{
-	^show_void[]
-}
-
-@show_userclass[o]
-$result[<u class="userclass value">$o.CLASS_NAME</u>]
-
-@show_void[]
-$result[<span class="void value">void</span>]
-
-@show_bool[o]
-$result[<span class="bool value">^if($o){true}{false}</span>]
-
-@show_string[o]
-$result[<span class="string value">^self.replaceString[$o]</span>]
-
-@show_int[o]
-$result[<span class="numeric value">$o</span>]
-
-@show_double[o]
-$result[<span class="numeric value">$o</span>]
-
-@show_date[d]
-$result[<del>^^date::create^[</del><span class="date value">^d.sql-string[]</span><del>^]</del>]
-
-@show_hash[h;b;sort][k;v;sTabs]
-^self.iShift.inc[]
-$sTabs[^for[i](2;$self.iShift){&#09}]
-$result[
-<span class="hash value">^h.foreach[k;v]{&#09$sTabs<var>^$.^k.match[(.*[^^a-zа-я0-9_\-].*)][i]{<s>^[</s>$match.1<s>^]</s>}</var>^if($v is double || $v is bool){(<span id="hash_$iHashId">^self.showObject($v)</span>)}{^[<span id="hash_$iHashId">^self.showObject[$v]</span>^]}
-}</span>$sTabs]
-^self.iShift.dec[]
-
-@show_table[t][tCol;tFlipped;bNamless;bF]
-	$tCol[^t.columns[]]
-	$bNamless(false)
-	^if(^t.count[] > 0 && ^tCol.count[] == 0){
-		$bNamless(true)
-		$tFlipped[^t.flip[]]
-		$tCol[^table::create{column}]
-		^for[i](0;$tFlipped-1){^tCol.append{$i}}
-		$t[^tFlipped.flip[]] ^rem{ помогает для named таблиц, у которых колонки не заданы }
-	}
-	$sTabs[^for[i](1;$self.iShift){&#09}]
-	$fMarginLeft($self.iShift*5)
-	^if($self.iShift > 0){^fMarginLeft.inc(5)}
-	$bF(false)
-	$result[<table class="table value" style="margin-left: ${fMarginLeft}em">^if(!$bNamless){<tr>^tCol.menu{<th>^if(!$bF){$bF(true)<del>^^table::create^if($bNamless){^[nameless^]}^{</del>}$tCol.column</th>}</tr>}^t.menu{<tr>^tCol.menu{<td>^if(!$bF){$bF(true)<del>^^table::create^if($bNamless){^[nameless^]}^{</del>}^show_string[^if($bNamless){$t.[$tCol.column]}{$t.fields.[$tCol.column]}]</td>}</tr>}</table><del>^}</del>$sTabs]
-
-@show_file[f][h]
-$sTabs[^for[i](1;$self.iShift){&#09}]
-$fMarginLeft($self.iShift*5)
-^if($self.iShift > 0){^fMarginLeft.inc(5)}
-$result[<pre class="file value" style="margin-left: ${fMarginLeft}em">
-^try{
-	$h[^file::stat[$f.name]]
-	File: ^file:fullpath[$f.name]
-	Size: $h.size byte
-	Create: ${h.cdate.day}.${h.cdate.month}.${h.cdate.year} ${h.cdate.hour}:${h.cdate.minute}
-	Modify: ${h.mdate.day}.${h.mdate.month}.${h.mdate.year} ${h.mdate.hour}:${h.mdate.minute}
-	Last call: ${h.adate.day}.${h.adate.month}.${h.adate.year} ${h.adate.hour}:${h.adate.minute}
-	MIME-type: $h.content-type^if(${h.content-type} eq "text/plain" || ${h.content-type} eq "text/html"){
-		First 100 symbols:
-		^f.text.left(100)...
-
-		Last 100 symbols:
-		...^f.text.right(100)}}{
-	$exception.handled(1)
-	^file:fullpath[$f.name] (file) not find!
-}</pre>$sTabs]
-
-@show_image[i]
-^if(def $i.src){^i.html[]} <b>(image)</b> Height: ${i.height}px Width: ${i.width}px ^if(def $i.exif){^self.show_hash[$i.exif]}{EXIF not find} <br/>
-
-@show_xdoc[x][s]
-	^self.prepareFormat[$x]
-	$s[^x.string[ $.omit-xml-declaration[no] $.method[xml] $.indent[yes]]]
-
-	$sTabs[^for[i](1;$self.iShift){&#09}]
-	$fMarginLeft($self.iShift*5)
-	^if($self.iShift > 0){^fMarginLeft.inc(5)}
-
-	$sDoc[^self.replaceString[$s]]
-	$sDoc[^sDoc.trim[end]]
-	$result[<pre class="xdoc value" style="margin-left: ${fMarginLeft}em"><del>^^xdoc::create^{</del>$sDoc<del>^}</del></pre>$sTabs]
-
-@show_xnode[x][result]
-	^switch[$x.nodeType]{
-		^case[1]{$result[<span class="node1 value">&lt^;$x.nodeName^self.showAttributes[$x]&gt^;^self.showChild[$x]&lt^;/$x.nodeName&gt^;</span>]}
-		^case[2]{$result[<span class="node2 value">$x.nodeName="$x.nodeValue"</span>]}
-		^case[3]{$result[<span class="node3 value">$x.nodeValue</span>]}
-	}
-
-@showAttributes[x][result]
-	^try{
-		$result[^x.attributes.foreach[k;v]{ ^self.show_xnode[$v]}]
-	}{
-		$exception.handled(1)
-	}
-
-@showChild[x][result]
-	^try{
-		$result[^x.childNodes.foreach[k;v]{^self.show_xnode[$v]}]
-	}{
-		$exception.handled(1)
-	}
-
-@replaceString[s][result]
-	$result[^s.replace[^table::create[nameless]{<	&lt^;^#0A>	&gt^;}]]
-
-@show_Array[a][result]
-	$result[Array($a.count): <br/> ^show_hash[$a.hash;;1]]
-
-@showXObject[o]
-	$result[<span style="color:red">$o.typeName</span>
-		^if($o.getID is junction){<b>^o.getID[]</b>}
-		^if($o.getName is junction){<span style="color:blue">(^o.getName[])</span>}
-		^if($o.ToString is junction){<span style="color:red">(^o.ToString[])</span>}
-		^if($o.current)[
-			^self.showObject[$o.current]
-		]
-	]
-
-# clear empty text nodes
-@prepareFormat[document][rootnodes;result]
-	$rootnodes[$document.documentElement.childNodes]
-	^self.prepareFormatChild[$document.documentElement;$rootnodes]
-
-@prepareFormatChild[parent;child][i;node;result]
-	^for[i](0;$child-1){
-		$node[$child.$i]
-		^if(($node.nodeType == $xdoc:TEXT_NODE) && ^node.nodeValue.trim[] eq ""){
-			$node[^parent.removeChild[$node]]
-		}{
-			^if($node.nodeType==$xdoc:ELEMENT_NODE){
-				^self.prepareFormatChild[$node;$node.childNodes]
+@_outer_html[html]
+<div id="parser_debug" style="display: none">
+$html
+</div>
+<style>
+	#parser_debug {box-sizing: border-box; background-color: #eee; font-size: 12px; font-family: monospace; padding: 0.5em 1em; position: fixed; z-index: 88888; top: 0; left: 0; width: 100%; height: 100%; overflow: auto;}
+	#parser_debug th, #parser_debug td {vertical-align: top; text-align: left; font-weight: normal; padding: 0.25em;}
+	.parser_debug_show {margin: 0 0 3em;}
+	.parser_debug_show pre {color: #555; font-size: inherit; line-height: 1.4;}
+	.parser_debug_show i, .parser_debug_show s, .parser_debug_show b, .parser_debug_show a, .parser_debug_show u {text-decoration: none; font-weight: normal; display: inline; color: #000;}
+	.parser_debug_show i {font-size: 50%;}
+	.parser_debug_show a {color: #099;}
+	.parser_debug_show s {color: #909;}
+	.parser_debug_show b {color: #00f;}
+	.parser_debug_show u {color: #009;}
+	.parser_debug_show ins {text-decoration: none;}
+	.parser_debug_show img {max-width: 64px; max-height: 64px;}
+	.parser_debug_foldable {border-bottom: 1px dotted; cursor: pointer;}
+	.parser_debug_foldable:hover, .parser_debug_foldable:hover * {color: #c00;}
+	.parser_debug_hidden:before {content: '...'; color: #909;}
+	.parser_debug_hidden {height: 1em; width: 1.8em; display: inline-block; overflow: hidden;}
+	.parser_debug_show table {border-collapse: collapse; margin: 0; vertical-align: top;}
+	.parser_debug_table, .parser_debug_table th, .parser_debug_table td {border: 1px dotted #999; color: #555;}
+	.parser_debug_separator {padding: 0 0 0 0.1em ! important; border-left: 1px dotted #00f;}
+	.parser_debug_stack th {color: #099;}
+	.parser_debug_stack td {color: #777;}
+	.parser_debug_stack b {color: #000; font-weight: normal;}
+</style>
+<script>
+	(function(){
+		var parser_debug_foldable = function(el){
+			var next_el = el, o, tag;
+			while(next_el = next_el.nextSibling){
+				if(next_el.nodeType == 1){
+					tag = next_el.tagName.toLowerCase();
+					if(tag == 'ins'){
+						o = {el: el, text: el.innerText};
+						ao.push(o);
+						el.onclick = function(){
+							if(o.hidden){
+								next_el.className = '';
+								o.hidden = false;
+							}else{
+								next_el.className = 'parser_debug_hidden';
+								o.hidden = true;
+							}
+							return false;
+						}
+						el.className += ' parser_debug_foldable';
+						if(
+							next_el.parentNode.tagName.toLowerCase() === 'ins'
+							&& next_el.innerHTML.replace(/(<\/?[a-z][^^>]+>|\s+)/g, '').length > $self.long_string_length
+						){
+							el.onclick();
+						}
+						break;
+					}else if(tag == 'a'){
+						break;
+					}
+				}
 			}
+		};
+		var d = document.getElementById('parser_debug'),
+			p = d.getElementsByTagName('pre');
+
+		for(var i = 0; i < p.length; i++){
+			p[i].innerHTML = p[i].innerHTML
+				.replace(
+					/<a([^^>]*)>\^$\.\[(.+?)\]<\/a>/g,
+					'<s>^$.[</s><a^$1>^$2</a><s>]</s>'
+				)
+				.replace(
+					/<a([^^>]*)>\^$\.(.+?)<\/a>/g,
+					'<s>^$.</s><a^$1>^$2</a>'
+				)
+				.replace(
+					/<u([^^>]*)>\^^(image|xdoc|table|hash|file|void|date|regex)::create<\/u>/g,
+					'<u^$1>^^<b>^$2</b>::create</u>'
+				)
+				.replace(
+					/<u([^^>]*)>\^^(\S+)::create<\/u>/g,
+					'<s>^^</s><u^$1>^$2<s>::</s>create</u>'
+				)
+				.replace(/(\t+)/g, '<i>^$1</i>')
 		}
-	}
+
+		var a = d.getElementsByTagName('a'), ao = [], b = window.HTMLElement ? window : body;
+
+		for(var i = 0, ii = a.length; i < ii; i++){
+			parser_debug_foldable(a[i]);
+		}
+		if(d.getElementsByTagName('hr')[0]){
+			d.style.display = '';
+		}else{
+			b.onkeydown = function(e){
+				e = e || window.event;
+				if((e.ctrlKey || e.metaKey) && (e.keyCode == 192 || e.keyCode == 96 || e.keyCode == 191)){
+					d.style.display = d.style.display == 'none' ? '' : 'none';
+				}
+			};
+		}
+		b.onhashchange = function(e){
+			var c = location.hash.replace(/^^#/, '').split(/\s+/), m, mm;
+			for(var i = 0; i < c.length; i++){
+				m = c[i].match(/^^(show|hide)=(.+)/);
+				if(m){
+					mm = new RegExp('(' + m[2] + ')')
+					for(var j = 0, jj= ao.length; j < jj; j++){
+						if(
+							ao[j].text.match(mm)
+							&& (
+								(m[1] == 'show' && ao[j].hidden)
+								|| (m[1] == 'hide' && !ao[j].hidden)
+							)
+						){
+							ao[j].el.onclick();
+						}
+					}
+				}
+			}
+		};
+		b.onhashchange();
+	})();
+</script>
