@@ -346,7 +346,7 @@ $result[$text]
 	$template[^#0A]
 }
 ^if(def $result){
-	^if($template eq $types.NESTING){
+	^if($template eq $Types.NESTING){
 		$result[^result.match[^^(.+?)?(?:^taint[regex][$Types.NL])(.*)^$][]{$match.1^outLineRules[$match.2;$type;$cnt]}]
 	}{
 		$result[^result.replace[$Types.NL;$template]]
