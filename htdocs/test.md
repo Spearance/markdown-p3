@@ -22,6 +22,12 @@ You will like those projects!
 ##### h5 Heading
 ###### h6 Heading
 
+## Paragraph
+
+Single paragraph.
+
+Paragraph text
+with new line.
 
 ## Horizontal Rules
 
@@ -131,7 +137,7 @@ var foo = function (bar) {
   return bar++;
 };
 
-const b = 'text with\nnew line';
+const b = 'text with\\nnew line';
 
 console.log(foo(5));
 ```
