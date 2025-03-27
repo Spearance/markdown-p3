@@ -20,7 +20,7 @@ $markdown[^markdown::create[
 	^rem{ заменять сочетания символов }
 	$.typograph(1)
 	^rem{ подсвечивать код }
-	$.highlight(1)
+	$.highlight(0)
 ]]
 
 ^markdown.parse[Text with [link](https://github.com "GitHub").]
@@ -68,7 +68,11 @@ $markdown[^markdown::create[
 * Код инлайновый в одиннарных бэктиках `code`.
 * Код с отступами 4 пробела или один символ табуляции.
 * Код за «забором» в тройных бэктиках.
-* Код за «забором» с подсветкой, используется [highlight.js](https://highlightjs.org/) с поддержкой 192 языков, включая Parser 3.
+* Код за «забором» с подсветкой, используется [highlight.js](https://highlightjs.org/) с поддержкой 192 языков, включая Parser 3. Для явно указанных языков назначается соответствующий класс в теге:
+
+``` HTML
+<code class="language-parser"># код Parser 3</code>
+```
 
 ### Служебные символы
 
