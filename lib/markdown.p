@@ -1,6 +1,6 @@
 # markdown.p
 # v. 0.1.0
-# Evgeniy Lepeshkin, 2025-03-25
+# Evgeniy Lepeshkin, 2025-03-27
 
 @CLASS
 markdown
@@ -88,18 +88,20 @@ $result[$text]
 	^switch[$type]{
 		^case[$Types.UL]{
 			$result[^result.match[\\n\s*[+*-]\s][g]{\n}]
-			$result[^result.match[^^\s*[+*-]\s(.+)?^$][]{<ul><li>^replaceNewLine[$match.1;</li>^#0A<li>]</li></ul>}]
+			$result[^result.match[^^(\s*[+*-])\s+(.+)?^$][]{<ul><li>^replaceNewLine[$match.2;</li>^#0A<li>]</li></ul>}]
 		}
+
 		^case[$Types.OL]{
 			$result[^result.match[\\n\s*\d+\.\s][g]{\n}]
 			$result[^result.match[^^\s*(\d+)\.\s(.+)?^$][]{<ol start="^match.1.int(1)"><li>^replaceNewLine[$match.2;</li>^#0A<li>]</li></ol>}]
 		}
+
 		^case[$Types.H]{
 			$result[^result.match[^^(#{1,6})\s(.+)?^$][]{<h^match.1.length[]>$match.2</h^match.1.length[]>}]
 		}
 
 		^case[$Types.CITE]{
-			$result[^result.match[^^\s*>(?:\s*>)*(.+)?^$][]{<blockquote>^replaceNewLine[$match.1;nesting;$type]</blockquote>}]
+			$result[^result.match[^^(\s*>(?:\s*>)*)(.*)?^$][]{^if((^cnt.int(0) && $cnt != ^match.1.length[]) || !^cnt.int(0)){<blockquote>}{<$Types.BR>}^replaceNewLine[$match.2;$Types.NESTING;$type;^match.1.length[]]^if((^cnt.int(0) && $cnt != ^match.1.length[]) || !^cnt.int(0)){</blockquote>}}]
 		}
 
 		^case[$Types.FENCE]{
@@ -118,10 +120,11 @@ $result[$text]
 }{
 	^switch[$type]{
 		^case[$Types.HR]{
-			$result[<hr>]
+			$result[<$Types.HR>]
 		}
+
 		^case[DEFAULT]{
-			$result[^for[i](1;$cnt){<br>}]
+			$result[^for[i](1;$cnt){<$Types.BR>}]
 		}
 	}
 }
@@ -246,6 +249,18 @@ $result[^table::create{piece	type	cnt}]
 				}
 			}
 
+			^case[$Types.P]{
+				^while($nextType eq $Types.P && ^temp.line[] < ^temp.count[]){
+					^temp.offset(1)
+					$nextType[^checkType[$temp.piece]]
+					$piece[$piece^if($nextType eq $Types.P){<$Types.BR>}$temp.piece]
+					^if($nextType eq $Types.P){
+						^temp.delete[]
+					}
+					^temp.offset(-1)
+				}
+			}
+
 			^case[$Types.BR]{
 				^while($nextType eq $Types.BR && ^temp.line[] < ^temp.count[]){
 					^temp.offset(1)
@@ -324,15 +339,15 @@ $result[$text]
 
 
 #######################################
-@replaceNewLine[text;template;type]
+@replaceNewLine[text;template;type;cnt]
 $result[$text]
 
 ^if(!def $template){
 	$template[^#0A]
 }
 ^if(def $result){
-	^if($template eq "nesting"){
-		$result[^result.match[^^(.+?)${Types.NL}(.+)?^$][]{$match.1^outLineRules[$match.2;$type]}]
+	^if($template eq $types.NESTING){
+		$result[^result.match[^^(.+?)?(?:^taint[regex][$Types.NL])(.*)^$][]{$match.1^outLineRules[$match.2;$type;$cnt]}]
 	}{
 		$result[^result.replace[$Types.NL;$template]]
 	}
@@ -397,6 +412,7 @@ $Types[
 	$.UL[ul]
 	$.NL[\n]
 	$.ESC[╔╬╗]
+	$.NESTING[nesting]
 ]
 
 # hash for temporary save text structures
