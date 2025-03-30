@@ -147,7 +147,7 @@ $result[$text]
 	}
 
 	^rem{ strike }
-	$result[^result.match[(?<!\b)(~{1,2}\b)([^^~]+?)\1(?!\b)][g]{<s>$match.2</s>}]
+	$result[^result.match[(?<!~)(~{2}\b)([^^~]+?)\1(?!~)][g]{<s>$match.2</s>}]
 
 	^rem{ inserted }
 	$result[^result.match[(?<!\b)(\+{2}\b)([^^+]+?)\1(?!\b)][g]{<ins>$match.2</ins>}]
@@ -167,6 +167,12 @@ $result[$text]
 
 	^rem{ inline code }
 	$result[^result.match[(?<!`)`([^^`]+?)`(?!`)][g]{<code>$match.1</code>}]
+
+	^rem{ subscript }
+	$result[^result.match[(?<!~)~([^^~\p{P}]+?)~(?!~)][g]{<sub>$match.1</sub>}]
+
+	^rem{ superscript }
+	$result[^result.match[\^^([^^\^^\p{P}]+?)\^^][g]{<sup>$match.1</sup>}]
 
 	^rem{ abbr }
 	^if($tAbbreviation){
