@@ -71,6 +71,12 @@ ___This is bold-italic text___
 
 ==Marked text==
 
+Subscript: H~2~O, some text C~2~H~5~OH, ~~striked text~~ and strange line ~~~~~~~123~~~~~~~
+
+Superscript: X^2^, some math: `(x + y)^2^ = x^2^ + 2xy + y^2^`
+
+Example text with Parser code `^table::create{col^#0Afirst}`
+
 
 ## Blockquotes
 
