@@ -52,8 +52,12 @@ width: 100%;
 border-collapse: collapse;
 margin: 0.5em 0;
 }
-td {
+td, th {
 border: 1px solid grey;
+}
+th {
+font-weight: bold;
+font-size: 80%;
 }
 </style>
 </head>
@@ -377,13 +381,13 @@ const b = 'text with\nnew line';
 
 console.log(foo(5));</code></pre>
 <h2>Tables</h2>
-<table><tr><td> Option </td><td> Description </td></tr>
-<tr><td> data   </td><td> path to data files to supply the data that will be passed into templates. </td></tr>
+<table><thead><tr><th> Option </th><th> Description </th></tr>
+<tr></thead><td> data   </td><td> path to data files to supply the data that will be passed into templates. </td></tr>
 <tr><td> engine </td><td> engine to be used for processing templates. Handlebars is the default. </td></tr>
 <tr><td> ext    </td><td> extension to be used for dest files. </td></tr></table>
 <p>Different aligned columns</p>
-<table><tr><td align="left"> Syntax      </td><td align="center"> Description </td><td align="right"> Test Text     </td></tr>
-<tr><td align="left"> Header      </td><td align="center"> Title       </td><td align="right"> Here's this   </td></tr>
+<table><thead><tr><th align="left"> Syntax      </th><th align="center"> Description </th><th align="right"> Test Text     </th></tr>
+<tr></thead><td align="left"> Header      </td><td align="center"> Title       </td><td align="right"> Here's this   </td></tr>
 <tr><td align="left"> Paragraph   </td><td align="center"> Text        </td><td align="right"> And more      </td></tr></table>
 <h2>Links</h2>
 <p><a href="https://spearance.ru">link text</a></p>
