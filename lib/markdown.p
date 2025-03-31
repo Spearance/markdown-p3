@@ -83,7 +83,7 @@ $result[]
 # $result {string} — HTML
 #
 @outLineRules[text;type;cnt][rules]
-$result[$text]
+$result[$text][locals]
 ^if(def $result){
 	^switch[$type]{
 		^case[$Types.UL]{
@@ -111,6 +111,26 @@ $result[$text]
 		^case[$Types.CODE]{
 			$result[^result.match[\\n(?: {4}|\t)][g]{\n}]
 			$result[^result.match[^^( {4}|\t)(.+)^$][]{<pre><code>^apply-taint[as-is][^replaceNewLine[$match.2]]</code></pre>}]
+		}
+
+		^case[$Types.TBL]{
+			$result[^result.match[((\|\s*:*\-+:*\s*(?=\|))+\|)\\n][]{$head[^if(def $match.1){^match.1.mid(1)}]}]
+			^if(def $head){
+				$aligns[^hash::create[]]
+				$parts[^head.split[|;v]]
+				^if($parts){
+					^parts.menu{
+						^aligns.add[$.[^parts.offset[]][^getAllign[^parts.piece.trim[]]]]
+					}
+				}
+			}
+			$rows[^result.mid(1)]
+			$rows[^rows.split[|;v]]
+			$tdCnt(0)
+
+			$result[<table><tr>^if($rows){^rows.menu{^if($rows.piece eq $Types.NL){$Types.NL}{<td^if(def $aligns.[$tdCnt]){ align="$aligns.[$tdCnt]"}>$rows.piece^if($tdCnt == ^eval(^aligns._count[] - 1)){$tdCnt(0)}{^tdCnt.inc[]}</td>}}}</tr></table>]
+
+			$result[^replaceNewLine[$result;</tr>^#0A<tr>]]
 		}
 
 		^case[DEFAULT]{
@@ -279,6 +299,16 @@ $result[^table::create{piece	type	cnt}]
 				}
 			}
 
+			^case[$Types.TBL]{
+				^while($nextType eq $Types.TBL && ^temp.line[] < ^temp.count[]){
+					^temp.offset(1)
+					$nextType[^checkType[$temp.piece]]
+					$piece[$piece^if($nextType eq $Types.TBL){$Types.NL}$temp.piece]
+					^temp.delete[]
+					^temp.offset(-1)
+				}
+			}
+
 			^case[$Types.HR]{
 				$piece[]
 			}
@@ -370,6 +400,27 @@ $result[$text]
 	$result[^result.match[^^\*\^[([A-ZА-ЯЁ]+)\^]: (.+)(?:\n|^$)][gm]{^tAbbreviation.append[$.abbr[$match.1]$.title[$match.2]]}]
 }
 ### End @addAbbreviation
+
+
+########################################
+# Get table align value
+@getAllign[text]
+$result[]
+
+^if(def $text){
+	^if(^text.match[:][gn] == 2){
+		$result[center]
+	}{
+		^if(^text.left(1) eq ":"){
+			$result[left]
+		}{
+				^if(^text.right(1) eq ":"){
+				$result[right]
+			}	
+		}
+	}
+}
+### End @getAlign
 
 
 #######################################

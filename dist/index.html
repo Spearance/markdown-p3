@@ -47,6 +47,14 @@ padding: 1em 0.5em;
 font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 white-space: pre;
 }
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 0.5em 0;
+}
+td {
+border: 1px solid grey;
+}
 </style>
 </head>
 <body>
@@ -149,6 +157,12 @@ ___This is bold-italic text___
 
 ==Marked text==
 
+Subscript: H~2~O, some text C~2~H~5~OH, ~~striked text~~ and strange line ~~~~~~~123~~~~~~~
+
+Superscript: X^2^, some math: `(x + y)^2^ = x^2^ + 2xy + y^2^`
+
+Example text with Parser code `^table::create{col^#0Afirst}`
+
 
 ## Blockquotes
 
@@ -228,13 +242,12 @@ console.log(foo(5));
 | engine | engine to be used for processing templates. Handlebars is the default. |
 | ext    | extension to be used for dest files. |
 
-Right aligned columns
+Different aligned columns
 
-| Option | Description |
-| ------:| -----------:|
-| data   | path to data files to supply the data that will be passed into templates. |
-| engine | engine to be used for processing templates. Handlebars is the default. |
-| ext    | extension to be used for dest files. |
+| Syntax      | Description | Test Text     |
+| :---        |    :----:   |          ---: |
+| Header      | Title       | Here&apos;s this   |
+| Paragraph   | Text        | And more      |
 
 
 ## Links
@@ -320,6 +333,9 @@ It converts &quot;HTML&quot;, but keep intact partial entries like &quot;xxxHTML
 <p><strong><em>This is bold-italic text</em></strong></p>
 <p><ins>Underlined text</ins></p>
 <p><mark>Marked text</mark></p>
+<p>Subscript: H<sub>2</sub>O, some text C<sub>2</sub>H<sub>5</sub>OH, <s>striked text</s> and strange line ~~~~~~~123~~~~~~~</p>
+<p>Superscript: X<sup>2</sup>, some math: <code>(x + y)<sup>2</sup> = x<sup>2</sup> + 2xy + y<sup>2</sup></code></p>
+<p>Example text with Parser code <code>^table::create{col^#0Afirst}</code></p>
 <h2>Blockquotes</h2>
 <blockquote> Blockquotes can also be nested…<blockquote> …by using additional greater-than signs right next to each other…<blockquote> …or with spaces between arrows.</blockquote></blockquote></blockquote>
 <h2>Escaped chars</h2>
@@ -361,18 +377,14 @@ const b = 'text with\nnew line';
 
 console.log(foo(5));</code></pre>
 <h2>Tables</h2>
-<p>| Option | Description |</p>
-<p>| ------ | ----------- |</p>
-<p>| data   | path to data files to supply the data that will be passed into templates. |</p>
-<p>| engine | engine to be used for processing templates. Handlebars is the default. |</p>
-<p>| ext    | extension to be used for dest files. |</p>
-<p>Right aligned columns</p>
-<p>| Option | Description |</p>
-<p>| ------:| -----------:|</p>
-<p>| data   | path to data files to supply the data that will be passed into templates. |</p>
-<p>| engine | engine to be used for processing templates. Handlebars is the default. |</p>
-<p>| ext    | extension to be used for dest files. |</p>
-<br><br>
+<table><tr><td> Option </td><td> Description </td></tr>
+<tr><td> data   </td><td> path to data files to supply the data that will be passed into templates. </td></tr>
+<tr><td> engine </td><td> engine to be used for processing templates. Handlebars is the default. </td></tr>
+<tr><td> ext    </td><td> extension to be used for dest files. </td></tr></table>
+<p>Different aligned columns</p>
+<table><tr><td align="left"> Syntax      </td><td align="center"> Description </td><td align="right"> Test Text     </td></tr>
+<tr><td align="left"> Header      </td><td align="center"> Title       </td><td align="right"> Here's this   </td></tr>
+<tr><td align="left"> Paragraph   </td><td align="center"> Text        </td><td align="right"> And more      </td></tr></table>
 <h2>Links</h2>
 <p><a href="https://spearance.ru">link text</a></p>
 <p><a href="http://github.com/spearance/markdown-p3" title="title text!">link with title (mouse over and wait)</a></p>
