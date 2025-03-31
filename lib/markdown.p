@@ -1,6 +1,6 @@
 # markdown.p
 # v. 0.1.0
-# Evgeniy Lepeshkin, 2025-03-27
+# Evgeniy Lepeshkin, 2025-03-31
 
 @CLASS
 markdown
@@ -114,21 +114,20 @@ $result[$text][locals]
 		}
 
 		^case[$Types.TBL]{
-			$result[^result.match[((\|\s*:*\-+:*\s*(?=\|))+\|)\\n][]{$head[^if(def $match.1){^match.1.mid(1)}]}]
+			$result[^result.match[((\|\s*:*\-+:*\s*(?=\|))+\|)\\n][]{</thead>$head[^if(def $match.1){^match.1.mid(1)}]}]
 			^if(def $head){
 				$aligns[^hash::create[]]
-				$parts[^head.split[|;v]]
-				^if($parts){
-					^parts.menu{
-						^aligns.add[$.[^parts.offset[]][^getAllign[^parts.piece.trim[]]]]
-					}
+				$head[^head.split[|;v]]
+				^head.menu{
+					^aligns.add[$.[^head.offset[]][^getAllign[^head.piece.trim[]]]]
 				}
 			}
 			$rows[^result.mid(1)]
 			$rows[^rows.split[|;v]]
 			$tdCnt(0)
+			$tag[th]
 
-			$result[<table><tr>^if($rows){^rows.menu{^if($rows.piece eq $Types.NL){$Types.NL}{<td^if(def $aligns.[$tdCnt]){ align="$aligns.[$tdCnt]"}>$rows.piece^if($tdCnt == ^eval(^aligns._count[] - 1)){$tdCnt(0)}{^tdCnt.inc[]}</td>}}}</tr></table>]
+			$result[<table><thead><tr>^if($rows){^rows.menu{^if($rows.piece eq $Types.NL){$Types.NL}($rows.piece eq "\n</thead>"){\n</thead>$tag[td]}{<${tag}^if(def $aligns.[$tdCnt]){ align="$aligns.[$tdCnt]"}>$rows.piece^if($tdCnt == ^eval(^aligns._count[] - 1)){$tdCnt(0)}{^tdCnt.inc[]}</${tag}>}}}</tr></table>]
 
 			$result[^replaceNewLine[$result;</tr>^#0A<tr>]]
 		}
