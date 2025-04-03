@@ -117,6 +117,16 @@ Start numbering with offset:
 57. foo
 1. bar
 
+Combined
+
++ Create a list by starting a line with `+`, `-`, or `*`
++ Sub-lists are made by indenting 2 spaces:
+  - Marker character change forces new list start:
+    1. Ac tristique libero volutpat at
+    2. Facilisis in pretium nisl aliquet
+    3. Nulla volutpat aliquam velit
++ Very easy!
+
 
 ## Code
 

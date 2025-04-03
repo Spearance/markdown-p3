@@ -207,6 +207,16 @@ Start numbering with offset:
 57. foo
 1. bar
 
+Combined
+
++ Create a list by starting a line with `+`, `-`, or `*`
++ Sub-lists are made by indenting 2 spaces:
+  - Marker character change forces new list start:
+    1. Ac tristique libero volutpat at
+    2. Facilisis in pretium nisl aliquet
+    3. Nulla volutpat aliquam velit
++ Very easy!
+
 
 ## Code
 
@@ -303,8 +313,11 @@ It converts &quot;HTML&quot;, but keep intact partial entries like &quot;xxxHTML
 <section>
 <h3>Результат</h3>
 <hr><p><strong>Advertisement 🙂</strong></p>
-<ul><li><strong><a href="https://highlightjs.org/">highlight.js</a></strong> - The Internet's favorite JavaScript syntax highlighter supporting<br>  Node.js and the web.</li>
-<li><strong><a href="https://parser.ru">Parser 3</a></strong> - simple and convenient object-oriented language<br>  which allows creating good sites in short time.</li></ul>
+<ul>
+<li><strong><a href="https://highlightjs.org/">highlight.js</a></strong> - The Internet's favorite JavaScript syntax highlighter supporting<br>  Node.js and the web.</li>
+<li><strong><a href="https://parser.ru">Parser 3</a></strong> - simple and convenient object-oriented language<br>  which allows creating good sites in short time.</li>
+</ul>
+
 <p>You will like those projects!</p>
 <br><br><br><br><br>
 <hr>
@@ -347,22 +360,53 @@ It converts &quot;HTML&quot;, but keep intact partial entries like &quot;xxxHTML
 <p>For example: <code>`code`</code></p>
 <h2>Lists</h2>
 <p>Unordered</p>
-<ul><li>Create a list by starting a line with <code>+</code>, <code>-</code>, or <code>*</code></li>
+<ul>
+<li>Create a list by starting a line with <code>+</code>, <code>-</code>, or <code>*</code></li>
 <li>Sub-lists are made by indenting 2 spaces:</li>
+<ul>
 <li>Marker character change forces new list start:</li>
+<ul>
 <li>Ac tristique libero volutpat at</li>
 <li>Facilisis in pretium nisl aliquet</li>
 <li>Nulla volutpat aliquam velit</li>
-<li>Very easy!</li></ul>
+</ul>
+</ul>
+<li>Very easy!</li>
+</ul>
+
 <p>Ordered</p>
-<ol start="1"><li>Lorem ipsum dolor sit amet</li>
+<ol>
+<li>Lorem ipsum dolor sit amet</li>
 <li>Consectetur adipiscing elit</li>
-<li>Integer molestie lorem at massa</li></ol>
-<ol start="1"><li>You can use sequential numbers…</li>
-<li>…or keep all the numbers as <code>1.</code></li></ol>
+<li>Integer molestie lorem at massa</li>
+</ol>
+
+<ol>
+<li>You can use sequential numbers…</li>
+<li value="1">…or keep all the numbers as <code>1.</code></li>
+</ol>
+
 <p>Start numbering with offset:</p>
-<ol start="57"><li>foo</li>
-<li>bar</li></ol>
+<ol>
+<li value="57">foo</li>
+<li value="1">bar</li>
+</ol>
+
+<p>Combined</p>
+<ul>
+<li>Create a list by starting a line with <code>+</code>, <code>-</code>, or <code>*</code></li>
+<li>Sub-lists are made by indenting 2 spaces:</li>
+<ul>
+<li>Marker character change forces new list start:</li>
+<ol>
+<li>Ac tristique libero volutpat at</li>
+<li>Facilisis in pretium nisl aliquet</li>
+<li>Nulla volutpat aliquam velit</li>
+</ol>
+</ul>
+<li>Very easy!</li>
+</ul>
+
 <h2>Code</h2>
 <p>Inline <code>code</code></p>
 <p>Indented code</p>
