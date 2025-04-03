@@ -1,6 +1,6 @@
 # markdown.p
 # v. 0.1.0
-# Evgeniy Lepeshkin, 2025-03-31
+# Evgeniy Lepeshkin, 2025-04-03
 
 @CLASS
 markdown
@@ -86,14 +86,8 @@ $result[]
 $result[$text][locals]
 ^if(def $result){
 	^switch[$type]{
-		^case[$Types.UL]{
-			$result[^result.match[\\n\s*[+*-]\s][g]{\n}]
-			$result[^result.match[^^(\s*[+*-])\s+(.+)?^$][]{<ul><li>^replaceNewLine[$match.2;</li>^#0A<li>]</li></ul>}]
-		}
-
-		^case[$Types.OL]{
-			$result[^result.match[\\n\s*\d+\.\s][g]{\n}]
-			$result[^result.match[^^\s*(\d+)\.\s(.+)?^$][]{<ol start="^match.1.int(1)"><li>^replaceNewLine[$match.2;</li>^#0A<li>]</li></ol>}]
+		^case[$Types.UL;$Types.OL]{
+			$result[^parseList[^replaceNewLine[$result;^#0A]]]
 		}
 
 		^case[$Types.H]{
@@ -255,20 +249,20 @@ $result[^table::create{piece	type	cnt}]
 			}
 
 			^case[$Types.UL]{
-				^while(($nextType eq $Types.UL || $nextType eq $Types.P) && ^temp.line[] < ^temp.count[]){
+				^while(($nextType eq $Types.UL || $nextType eq $Types.OL || $nextType eq $Types.P) && ^temp.line[] < ^temp.count[]){
 					^temp.offset(1)
 					$nextType[^checkType[$temp.piece]]
-					$piece[$piece^if($nextType eq $Types.UL){$Types.NL}($nextType eq $Types.P){<$Types.BR>}$temp.piece]
+					$piece[$piece^if($nextType eq $Types.UL || $nextType eq $Types.OL){$Types.NL}($nextType eq $Types.P){<$Types.BR>}$temp.piece]
 					^temp.delete[]
 					^temp.offset(-1)
 				}
 			}
 
 			^case[$Types.OL]{
-				^while(($nextType eq $Types.OL || $nextType eq $Types.P) && ^temp.line[] < ^temp.count[]){
+				^while(($nextType eq $Types.OL || $nextType eq $Types.UL || $nextType eq $Types.P) && ^temp.line[] < ^temp.count[]){
 					^temp.offset(1)
 					$nextType[^checkType[$temp.piece]]
-					$piece[$piece^if($nextType eq $Types.OL){$Types.NL}($nextType eq $Types.P){<$Types.BR>}$temp.piece]
+					$piece[$piece^if($nextType eq $Types.OL || $nextType eq $Types.UL){$Types.NL}($nextType eq $Types.P){<$Types.BR>}$temp.piece]
 					^temp.delete[]
 					^temp.offset(-1)
 				}
@@ -360,6 +354,53 @@ $result[]
 	}
 }
 ### End @checkType
+
+
+########################################
+# Parse list <ol>, <ul>
+# @param text {string} — only list markdown markup
+# $result {string} — list HTML
+#
+@parseList[text][locals]
+^if(def $text){
+	$levels[^hash::create[]]
+	$list[^table::create{level	title	type	number}]
+
+	$text[^text.match[^^([ ]+|\t+)*([+*-]|\d+[.]?)\s+(.+?)^$][gm]{^list.append[
+		$.level(^if(def $match.1 && ^match.1.left(1) eq " "){^eval(^match.1.length[] / 2)}{^match.1.length[]} + 1)
+		$.title[$match.3]
+		$.type[^if(def $match.2 && ^match.2.match[\d]){$Types.OL}{$Types.UL}]
+		$.number[^if(def $match.2 && ^match.2.match[\d+]){^match.2.match[\D+][]{}}{0}]
+	]}]
+
+	$level(1)
+	$nextNumber(1)
+
+	$result[^apply-taint[optimized-as-is][
+		<$list.type>
+			^list.menu{
+				^if(^list.level.int(0) == $level){
+					<li^if($list.type eq $Types.OL && $list.number != $nextNumber){ value="$list.number"}>$list.title</li>
+				}{
+					^if(^list.level.int(0) > $level){
+						$levels.[$list.level][$list.type]<$list.type>^#0A<li>$list.title</li>
+					}
+					^if(^list.level.int(0) < $level){
+						^while($level > ^list.level.int(0)){
+							</$levels.[$level]>
+							^levels.delete[$level]
+							^level.dec[]
+						}
+						<li>$list.title</li>
+					}
+					$level(^list.level.int(0))
+				}
+				$nextNumber($list.number + 1)
+			}
+		</$list.type>
+	]]
+}
+### End @parseList
 
 
 #######################################
