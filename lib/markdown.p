@@ -1,5 +1,5 @@
 # markdown.p
-# v. 0.1.0
+# v. 1.0.0
 # Evgeniy Lepeshkin, 2025-04-03
 
 @CLASS
@@ -16,8 +16,8 @@ markdown
 # $.highlight(1) - use code hilight with highlight.js
 # 
 @create[param]
-$self.emoji(^if($param.emoji){$param.emoji}{1})
 $self.innerHTML(^if($param.innerHTML){$param.innerHTML}{0})
+$self.emoji(^if(def $param.emoji){$param.emoji}{1})
 $self.typograph(^if($param.typograph){$param.typograph}{1})
 $self.highlight(^if($param.highlight){$param.highlight}{0})
 
@@ -63,7 +63,11 @@ $result[]
 
 	^if($parts){
 		^parts.menu{
-			$result[$result^outLineRules[^if($parts.type ne $Types.CODE && $parts.type ne $Types.FENCE){^inLineRules[$parts.piece]}{$parts.piece};$parts.type;$parts.cnt]]
+			^try{
+				$result[$result^outLineRules[^if($parts.type ne $Types.CODE && $parts.type ne $Types.FENCE){^inLineRules[$parts.piece]}{$parts.piece};$parts.type;$parts.cnt]]
+			}{
+				$exceptions.handled(1)
+			}
 		}{
 			$result[$result^#0A]
 		}
@@ -335,13 +339,13 @@ $result[]
 }{
 	^if(^text.match[^^[-_*]{3,}^$]){
 		$result[$Types.HR]
-	}(^text.match[^^^#{1,6}]){
+	}(^text.match[^^^#{1,6}\s]){
 		$result[$Types.H]
-	}(^text.match[^^\s*>(?:\s*>)*]){
+	}(^text.match[^^\s*>(?:\s*>)*\s]){
 		$result[$Types.CITE]
 	}(^text.match[^^\s*[+*-]\s]){
 		$result[$Types.UL]
-	}(^text.match[^^\s*(?:\+|\d+\.?)\s]){
+	}(^text.match[^^\s*\d+[.)]?\s]){
 		$result[$Types.OL]
 	}(^text.match[^^`{3}]){
 		$result[$Types.FENCE]
@@ -366,7 +370,7 @@ $result[]
 	$levels[^hash::create[]]
 	$list[^table::create{level	title	type	number}]
 
-	$text[^text.match[^^([ ]+|\t+)*([+*-]|\d+[.]?)\s+(.+?)^$][gm]{^list.append[
+	$text[^text.match[^^([ ]+|\t+)*([+*-]|\d+[.)]?)\s+(.+?)^$][gm]{^list.append[
 		$.level(^if(def $match.1 && ^match.1.left(1) eq " "){^eval(^match.1.length[] / 2)}{^match.1.length[]} + 1)
 		$.title[$match.3]
 		$.type[^if(def $match.2 && ^match.2.match[\d]){$Types.OL}{$Types.UL}]
