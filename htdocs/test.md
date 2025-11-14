@@ -122,9 +122,9 @@ Combined
 + Create a list by starting a line with `+`, `-`, or `*`
 + Sub-lists are made by indenting 2 spaces:
   - Marker character change forces new list start:
-    1. Ac tristique libero volutpat at
-    2. Facilisis in pretium nisl aliquet
-    3. Nulla volutpat aliquam velit
+    1) Ac tristique libero volutpat at
+    2) Facilisis in pretium nisl aliquet
+    3) Nulla volutpat aliquam velit
 + Very easy!
 
 
@@ -193,7 +193,7 @@ Write me: <mail@spearance.ru>
 
 ## Images
 
-![Minions](https://images.unsplash.com/photo-1515041219749-89347f83291a?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)
+![Baikal Lake](https://img5tv.cdnvideo.ru/webp/shared/files/202102/1_1263573.jpg)
 [![Some Alt attribute](https://www.parser.ru/f/1/ptic.gif "The Bird")](https://parser.ru)
 
 Like links, Images also have a footnote style syntax
@@ -208,7 +208,7 @@ With a reference later in the document defining the URL location:
 ### Emojies
 
 > Classic markup: :angry: :blush: :broken_heart: :confused: :cry: :frowning: :heart: :imp: :innocent: :joy: :kissing: :laughing: :neutral_face: :open_mouth: :rage: :smile: :smiley: :smiling_imp: :sob: :stuck_out_tongue: :sunglasses: :sweat: :sweat_smile: :unamused: :wink:
->
+
 > Shortcuts (emoticons): :-) :-( 8-) ;) :'(
 
 ### Abbreviations
