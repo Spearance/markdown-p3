@@ -275,12 +275,15 @@ $result[^table::create{piece	type	cnt}]
 			^case[$Types.P]{
 				^while($nextType eq $Types.P && ^temp.line[] < ^temp.count[]){
 					^temp.offset(1)
+					$isLast(^temp.line[] == ^temp.count[])
 					$nextType[^checkType[$temp.piece]]
 					$piece[$piece^if($nextType eq $Types.P){<$Types.BR>}$temp.piece]
 					^if($nextType eq $Types.P){
 						^temp.delete[]
 					}
-					^temp.offset(-1)
+					^if(!$isLast){
+						^temp.offset(-1)
+					}
 				}
 			}
 
