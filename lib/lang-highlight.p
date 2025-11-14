@@ -1,5 +1,5 @@
 # typograph.p
-# v. 0.1.0
+# v. 1.0.0
 # Evgeniy Lepeshkin, 2025-03-25
 
 @CLASS
