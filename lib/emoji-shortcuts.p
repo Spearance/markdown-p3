@@ -1,6 +1,6 @@
 # emoji-shortcuts.p
-# v. 0.1.0
-# Evgeniy Lepeshkin, 2025-03-21
+# v. 1.0.1
+# Evgeniy Lepeshkin, 2025-11-15
 
 @CLASS
 emoji-shortcuts
