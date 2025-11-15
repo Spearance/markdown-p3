@@ -1,6 +1,6 @@
 # markdown.p
-# v. 1.0.0
-# Evgeniy Lepeshkin, 2025-04-03
+# v. 1.0.1
+# Evgeniy Lepeshkin, 2025-11-15
 
 @CLASS
 markdown
@@ -160,7 +160,7 @@ $result[$text]
 ^if(def $result){
 	^rem{ bold, italic }
 	^if(!^result.match[^^(_{4,}|\*{4,})]){
-		$result[^result.match[(?<![_*])(_{1,3}|\*{1,3}\b)([^^\1]+?)\1][g]{${hTag.[^match.1.length[]].open}${match.2}$hTag.[^match.1.length[]].close}]
+		$result[^result.match[(?<![_*])(_{1,3}|\*{1,3})([^^\1]+?)\1][g]{${hTag.[^match.1.length[]].open}${match.2}$hTag.[^match.1.length[]].close}]
 	}
 
 	^rem{ strike }
@@ -275,12 +275,15 @@ $result[^table::create{piece	type	cnt}]
 			^case[$Types.P]{
 				^while($nextType eq $Types.P && ^temp.line[] < ^temp.count[]){
 					^temp.offset(1)
+					$isLast(^temp.line[] == ^temp.count[])
 					$nextType[^checkType[$temp.piece]]
 					$piece[$piece^if($nextType eq $Types.P){<$Types.BR>}$temp.piece]
 					^if($nextType eq $Types.P){
 						^temp.delete[]
 					}
-					^temp.offset(-1)
+					^if(!$isLast){
+						^temp.offset(-1)
+					}
 				}
 			}
 
