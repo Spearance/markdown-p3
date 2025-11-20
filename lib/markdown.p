@@ -1,6 +1,6 @@
 # markdown.p
-# v. 1.0.1
-# Evgeniy Lepeshkin, 2025-11-15
+# v. 1.0.2
+# Evgeniy Lepeshkin, 2025-11-20
 
 @CLASS
 markdown
@@ -285,6 +285,7 @@ $result[^table::create{piece	type	cnt}]
 						^temp.offset(-1)
 					}
 				}
+				$isLast(false)
 			}
 
 			^case[$Types.BR]{
@@ -302,11 +303,15 @@ $result[^table::create{piece	type	cnt}]
 			^case[$Types.TBL]{
 				^while($nextType eq $Types.TBL && ^temp.line[] < ^temp.count[]){
 					^temp.offset(1)
+					$isLast(^temp.line[] == ^temp.count[])
 					$nextType[^checkType[$temp.piece]]
 					$piece[$piece^if($nextType eq $Types.TBL){$Types.NL}$temp.piece]
 					^temp.delete[]
-					^temp.offset(-1)
+					^if(!$isLast){
+						^temp.offset(-1)
+					}
 				}
+				$isLast(false)
 			}
 
 			^case[$Types.HR]{
