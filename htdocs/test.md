@@ -59,7 +59,7 @@ __This is bold text__
 
 *This is italic text*
 
-_This is italic text_
+_This is italic text_ but this_text_not
 
 ~~Strikethrough~~
 
