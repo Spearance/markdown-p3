@@ -1,6 +1,6 @@
 # markdown.p
-# v. 1.0.1
-# Evgeniy Lepeshkin, 2025-11-15
+# v. 1.0.2
+# Evgeniy Lepeshkin, 2025-11-20
 
 @CLASS
 markdown
@@ -48,6 +48,7 @@ $result[]
 	}
 
 	$text[^_remove[$text;escaped]]
+	$text[^_remove[$text;snake]]
 
 	^if($emoji){
 		^use[emoji-shortcuts.p]
@@ -74,6 +75,7 @@ $result[]
 	}
 
 	$result[^_return[$result;escaped]]
+	$result[^_return[$result;snake]]
 }
 ### End @parse
 
@@ -160,7 +162,7 @@ $result[$text]
 ^if(def $result){
 	^rem{ bold, italic }
 	^if(!^result.match[^^(_{4,}|\*{4,})]){
-		$result[^result.match[(?<![_*])(_{1,3}|\*{1,3})([^^\1]+?)\1][g]{${hTag.[^match.1.length[]].open}${match.2}$hTag.[^match.1.length[]].close}]
+		$result[^result.match[(?<![_*])(_{1,3}|\*{1,3})((?:\b|`|[^^ ])[^^\1]+?)\1][g]{${hTag.[^match.1.length[]].open}${match.2}$hTag.[^match.1.length[]].close}]
 	}
 
 	^rem{ strike }
@@ -285,6 +287,7 @@ $result[^table::create{piece	type	cnt}]
 						^temp.offset(-1)
 					}
 				}
+				$isLast(false)
 			}
 
 			^case[$Types.BR]{
@@ -302,11 +305,15 @@ $result[^table::create{piece	type	cnt}]
 			^case[$Types.TBL]{
 				^while($nextType eq $Types.TBL && ^temp.line[] < ^temp.count[]){
 					^temp.offset(1)
+					$isLast(^temp.line[] == ^temp.count[])
 					$nextType[^checkType[$temp.piece]]
 					$piece[$piece^if($nextType eq $Types.TBL){$Types.NL}$temp.piece]
 					^temp.delete[]
-					^temp.offset(-1)
+					^if(!$isLast){
+						^temp.offset(-1)
+					}
 				}
+				$isLast(false)
 			}
 
 			^case[$Types.HR]{
@@ -478,7 +485,14 @@ $result[$text]
 ^if(def $result){
 	$counter(0)
 	^hContainer.add[$.[$type][^hash::create[]]]
-	$result[^text.match[\\(^escaped.menu{^taint[regex][$escaped.char]}[|])][g]{$Types.ESC^hContainer.[$type].add[$.[$counter][$match.1]]^counter.inc[]}]
+	^switch[$type]{
+		^case[escaped]{
+			$result[^text.match[\\(^escaped.menu{^taint[regex][$escaped.char]}[|])][g]{$Types.ESC^hContainer.[$type].add[$.[$counter][$match.1]]^counter.inc[]}]
+		}
+		^case[snake]{
+			$result[^text.match[(\b(?:[a-zа-я0-9]+_[a-zа-я0-9]+)+)\b][gi]{$Types.SNAKE^hContainer.[$type].add[$.[$counter][$match.1]]^counter.inc[]}]
+		}
+	}
 }
 ### End @_remove
 
@@ -489,7 +503,14 @@ $result[$text]
 $counter(0)
 $result[$text]
 ^if($hContainer.[$type]){
-	$result[^result.match[$Types.ESC][g]{$hContainer.[$type].$counter^hContainer.[$type].delete[$counter]^counter.inc[]}]
+	^switch[$type]{
+		^case[escaped]{
+			$result[^result.match[$Types.ESC][g]{$hContainer.[$type].$counter^hContainer.[$type].delete[$counter]^counter.inc[]}]
+		}
+		^case[snake]{
+			$result[^result.match[$Types.SNAKE][g]{$hContainer.[$type].$counter^hContainer.[$type].delete[$counter]^counter.inc[]}]
+		}
+	}
 }
 ### End @_return
 
@@ -517,11 +538,13 @@ $Types[
 	$.NL[\n]
 	$.ESC[╔╬╗]
 	$.NESTING[nesting]
+	$.SNAKE[┌╥┘]
 ]
 
 # hash for temporary save text structures
 $hContainer[
 	$.escaped[]
+	$.snake[]
 ]
 
 # tags by number of repetitions

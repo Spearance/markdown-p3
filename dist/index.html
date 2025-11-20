@@ -148,7 +148,7 @@ __This is bold text__
 
 *This is italic text*
 
-_This is italic text_
+_This is italic text_ but this_text_not
 
 ~~Strikethrough~~
 
@@ -343,7 +343,7 @@ It converts &quot;HTML&quot;, but keep intact partial entries like &quot;xxxHTML
 <p><strong>This is bold text</strong></p>
 <p><strong>This is bold text</strong></p>
 <p><em>This is italic text</em></p>
-<p><em>This is italic text</em></p>
+<p><em>This is italic text</em> but this_text_not</p>
 <p><s>Strikethrough</s></p>
 <p><strong><em>This is bold-italic text</em></strong></p>
 <p><strong><em>This is bold-italic text</em></strong></p>
@@ -360,12 +360,11 @@ It converts &quot;HTML&quot;, but keep intact partial entries like &quot;xxxHTML
 <h2>Lists</h2>
 <p>Unordered</p>
 <ul>
-<li>Create a list by starting a line with <code>+</code>, <code>-</code>, or <code>*</code></li>
+<li>Create a list by starting a line with <code>+</code>, <code>-</code>, or <code><em></code></li>
 <li>Sub-lists are made by indenting 2 spaces:</li>
 <ul>
 <li>Marker character change forces new list start:</li>
 <ul>
-<li>Ac tristique libero volutpat at</li>
 <li>Facilisis in pretium nisl aliquet</li>
 <li>Nulla volutpat aliquam velit</li>
 </ul>
@@ -447,7 +446,7 @@ console.log(foo(5));</code></pre>
 <p>With a reference later in the document defining the URL location:</p>
 <p>[id]: <a href="https://octodex.github.com/images/dojocat.jpg">https://octodex.github.com/images/dojocat.jpg</a>  "The Dojocat"</p>
 <h3>Emojies</h3>
-<blockquote> Classic markup: 😠 😊 💔 😕 😢 😦 ❤️ 👿 😇 😂 😗 😆 😐 😮 😡 😄 🙂 😈 😭 😛 😎 😓 😅 😒 😉</blockquote>
+<blockquote> Classic markup: 😠 😊 :broken_heart: 😕 😢 😦 ❤️ 👿 😇 😂 😗 😆 :neutral_face: :open_mouth: 😡 😄 🙂 :smiling_imp: 😭 :stuck_out_tongue: 😎 😓 :sweat_smile: 😒 😉</blockquote>
 <blockquote> Shortcuts (emoticons): 🙂 😦 😎 😉 😢</blockquote>
 <h3>Abbreviations</h3>
 <p>This is <abbr title="Hyper Text Markup Language">HTML</abbr> abbreviation example.</p>
