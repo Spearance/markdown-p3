@@ -1,6 +1,6 @@
 # markdown.p
-# v. 1.0.2
-# Evgeniy Lepeshkin, 2025-11-20
+# v. 1.0.3
+# Evgeniy Lepeshkin, 2025-11-28
 
 @CLASS
 markdown
@@ -175,7 +175,7 @@ $result[$text]
 	$result[^result.match[(?<!\b)(\={2}\b)([^^+]+?)\1(?!\b)][g]{<mark>$match.2</mark>}]
 
 	^rem{ image }
-	$result[^result.match[\!\^[([^^^]]+)\^]\(([^^)]+?)(?:\s"([^^"]+?)")?\)][g]{<img src="$match.2" alt="^taint[html][$match.1]"^if(def $match.3){title="^taint[html][$match.3]"}>}]
+	$result[^result.match[\!\^[([^^^]]*)\^]\(([^^)]+?)(?:\s"([^^"]+?)")?\)][g]{<img src="$match.2" alt="^taint[html][$match.1]"^if(def $match.3){title="^taint[html][$match.3]"}>}]
 
 	^rem{ email }
 	$result[^result.match[(?<![="]mailto:)(?:&lt^;|<)?([-\w.]+@[-\w.]+\.\w{2,15})(?:&gt^;|>)?][gi]{<a href="mailto:$match.1">$match.1</a>}]
@@ -247,10 +247,13 @@ $result[^table::create{piece	type	cnt}]
 			^case[$Types.CODE]{
 				^while($nextType eq $Types.CODE && ^temp.line[] < ^temp.count[]){
 					^temp.offset(1)
+					$isLast(^temp.line[] == ^temp.count[])
 					$nextType[^checkType[$temp.piece]]
 					$piece[$piece^if($nextType eq $Types.CODE){$Types.NL}$temp.piece]
 					^temp.delete[]
-					^temp.offset(-1)
+					^if(!$isLast){
+						^temp.offset(-1)
+					}
 				}
 			}
 
