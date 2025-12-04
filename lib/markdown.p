@@ -204,7 +204,7 @@ $result[$text]
 	^rem{ abbr }
 	^if($tAbbreviation){
 		^tAbbreviation.menu{
-			$result[^result.match[(?<!\.)\b^taint[regex][$tAbbreviation.abbr]\b][g]{<abbr title="^taint[html][$tAbbreviation.title]">$tAbbreviation.abbr</abbr>}]
+			$result[^result.match[(?<!\.-)\b^taint[regex][$tAbbreviation.abbr]\b(?![.-])][g]{<abbr title="^taint[html][$tAbbreviation.title]">$tAbbreviation.abbr</abbr>}]
 		}
 	}
 }

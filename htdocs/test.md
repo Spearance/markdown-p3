@@ -221,4 +221,7 @@ This is HTML abbreviation example.
 
 It converts "HTML", but keep intact partial entries like "xxxHTMLyyy" and so on.
 
+Interception with abbreviation EXIF in link [exiftool.org/TagNames/EXIF.html](https://exiftool.org/TagNames/EXIF.html)
+
 *[HTML]: Hyper Text Markup Language
+*[EXIF]: Exchangeable image file format
