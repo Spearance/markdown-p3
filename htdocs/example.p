@@ -14,6 +14,16 @@ $markdown[^markdown::create[
 	$.typograph(1)
 	^rem{ подсвечивать код }
 	$.highlight(1)
+	
+	^rem{ настроить ссылки }
+	$.links[
+		^rem{ добавить в начало ссылки часть пути или имя сервера }
+		$.path[$env:SERVER_NAME|/some-root-path]
+		^rem{ добавлять атрибут target="" }
+		$.target[_blank|_self|...]
+		^rem{ добавлять атрибут rel="" }
+		$.rel[next|prev|nofollow|...]
+	]
 ]]
 
 ^markdown.parse[Text with [link](https://github.com "GitHub").]

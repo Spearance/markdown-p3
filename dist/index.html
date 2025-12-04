@@ -79,6 +79,16 @@ $markdown[^markdown::create[
 	$.typograph(1)
 	^rem{ подсвечивать код }
 	$.highlight(1)
+	
+	^rem{ настроить ссылки }
+	$.links[
+		^rem{ добавить в начало ссылки часть пути или имя сервера }
+		$.path[$env:SERVER_NAME|/some-root-path]
+		^rem{ добавлять атрибут target="" }
+		$.target[_blank|_self|...]
+		^rem{ добавлять атрибут rel="" }
+		$.rel[next|prev|nofollow|...]
+	]
 ]]
 
 ^markdown.parse[Text with [link](https://github.com "GitHub").]
@@ -269,9 +279,11 @@ Different aligned columns
 
 [link with title (mouse over and wait)](http://github.com/spearance/markdown-p3 &quot;title text!&quot;)
 
-Autoconverted link without formating  https://spearance.ru
+Autoconverted link without formating https://spearance.ru
 
 Disable Autoconverted link `https://github.com/spearance`
+
+Relative link with inserted server name: [download markdown](/test.md)
 
 ### Email
 
@@ -313,8 +325,8 @@ It converts &quot;HTML&quot;, but keep intact partial entries like &quot;xxxHTML
 <h3>Результат</h3>
 <hr><p><strong>Advertisement 🙂</strong></p>
 <ul>
-<li><strong><a href="https://highlightjs.org/">highlight.js</a></strong> - The Internet's favorite JavaScript syntax highlighter supporting<br>  Node.js and the web.</li>
-<li><strong><a href="https://parser.ru">Parser 3</a></strong> - simple and convenient object-oriented language<br>  which allows creating good sites in short time.</li>
+<li><strong><a href="https://highlightjs.org/" target="_blank" rel="external">highlight.js</a></strong> - The Internet's favorite JavaScript syntax highlighter supporting<br>  Node.js and the web.</li>
+<li><strong><a href="https://parser.ru" target="_blank" rel="external">Parser 3</a></strong> - simple and convenient object-oriented language<br>  which allows creating good sites in short time.</li>
 </ul>
 
 <p>You will like those projects!</p>
@@ -433,19 +445,20 @@ console.log(foo(5));</code></pre>
 <tr></thead><td align="left"> Header      </td><td align="center"> Title       </td><td align="right"> Here's this   </td></tr>
 <tr><td align="left"> Paragraph   </td><td align="center"> Text        </td><td align="right"> And more      </td></tr></table>
 <h2>Links</h2>
-<p><a href="https://spearance.ru">link text</a></p>
-<p><a href="http://github.com/spearance/markdown-p3" title="title text!">link with title (mouse over and wait)</a></p>
-<p>Autoconverted link without formating  <a href="https://spearance.ru">https://spearance.ru</a></p>
+<p><a href="https://spearance.ru" target="_blank" rel="external">link text</a></p>
+<p><a href="http://github.com/spearance/markdown-p3" title="title text!" target="_blank" rel="external">link with title (mouse over and wait)</a></p>
+<p>Autoconverted link without formating <a href="https://spearance.ru" target="_blank" rel="external">https://spearance.ru</a></p>
 <p>Disable Autoconverted link <code>https://github.com/spearance</code></p>
+<p>Relative link with inserted server name: <a href="//markdown-p3/test.md" target="_blank" rel="external">download markdown</a></p>
 <h3>Email</h3>
 <p>To quickly turn email address into a link, enclose it in angle brackets or without them.</p>
 <p>Write me: <a href="mailto:mail@spearance.ru">mail@spearance.ru</a></p>
 <h2>Images</h2>
-<p><img src="https://img5tv.cdnvideo.ru/webp/shared/files/202102/1_1263573.jpg" alt="Baikal Lake"><br><a href="https://parser.ru"><img src="https://www.parser.ru/f/1/ptic.gif" alt="Some Alt attribute"title="The Bird"></a></p>
+<p><img src="https://img5tv.cdnvideo.ru/webp/shared/files/202102/1_1263573.jpg" alt="Baikal Lake"><br><a href="https://parser.ru" target="_blank" rel="external"><img src="https://www.parser.ru/f/1/ptic.gif" alt="Some Alt attribute"title="The Bird"></a></p>
 <p>Like links, Images also have a footnote style syntax</p>
 <p>![Alt text][id]</p>
 <p>With a reference later in the document defining the URL location:</p>
-<p>[id]: <a href="https://octodex.github.com/images/dojocat.jpg">https://octodex.github.com/images/dojocat.jpg</a>  "The Dojocat"</p>
+<p>[id]: <a href="https://octodex.github.com/images/dojocat.jpg" target="_blank" rel="external">https://octodex.github.com/images/dojocat.jpg</a>  "The Dojocat"</p>
 <h3>Emojies</h3>
 <blockquote> Classic markup: 😠 😊 :broken_heart: 😕 😢 😦 ❤️ 👿 😇 😂 😗 😆 :neutral_face: :open_mouth: 😡 😄 🙂 :smiling_imp: 😭 :stuck_out_tongue: 😎 😓 :sweat_smile: 😒 😉</blockquote>
 <blockquote> Shortcuts (emoticons): 🙂 😦 😎 😉 😢</blockquote>

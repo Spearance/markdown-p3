@@ -180,9 +180,11 @@ Different aligned columns
 
 [link with title (mouse over and wait)](http://github.com/spearance/markdown-p3 "title text!")
 
-Autoconverted link without formating  https://spearance.ru
+Autoconverted link without formating https://spearance.ru
 
 Disable Autoconverted link `https://github.com/spearance`
+
+Relative link with inserted server name: [download markdown](/test.md)
 
 ### Email
 
