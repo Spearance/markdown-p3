@@ -92,6 +92,11 @@ $example[^file::load[text;example.p]]
 			$markdown[^markdown::create[
 				$.emoji(1)
 				$.highlight(1)
+				$.links[
+					$.path[//$env:SERVER_NAME]
+					$.target[_blank]
+					$.rel[external]
+				]
 			]]
 			^markdown.parse[^untaint{$file.text}]
 		</section>

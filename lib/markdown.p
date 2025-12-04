@@ -1,6 +1,6 @@
 # markdown.p
-# v. 1.0.3
-# Evgeniy Lepeshkin, 2025-11-28
+# v. 1.1.0
+# Evgeniy Lepeshkin, 2025-12-04
 
 @CLASS
 markdown
@@ -14,12 +14,20 @@ markdown
 # $.innerHTML(0) - accept inline HTTML (not safe)
 # $.typograph(1) — use typograph replacement
 # $.highlight(1) - use code hilight with highlight.js
+# $.links[
+# 	$.path[] - prefix path for relative links
+# 	$.target[] - value of target attribute
+# 	$.rel[] - value of rel attribute
+# ]
 # 
 @create[param]
 $self.innerHTML(^if($param.innerHTML){$param.innerHTML}{0})
 $self.emoji(^if(def $param.emoji){$param.emoji}{1})
 $self.typograph(^if($param.typograph){$param.typograph}{1})
 $self.highlight(^if($param.highlight){$param.highlight}{0})
+^if($param.links is "hash"){
+	$self.links[^hash::create[$param.links]]
+}
 
 ^if($self.highlight){
 	^use[lang-highlight.p]
@@ -181,8 +189,8 @@ $result[$text]
 	$result[^result.match[(?<![="]mailto:)(?:&lt^;|<)?([-\w.]+@[-\w.]+\.\w{2,15})(?:&gt^;|>)?][gi]{<a href="mailto:$match.1">$match.1</a>}]
 
 	^rem{ link }
-	$result[^result.match[\^[([^^^]]+)\^]\(([^^)]+?)(?:\s"([^^"]+?)")?\)][gi]{<a href="$match.2"^if(def $match.3){ title="^taint[html][$match.3]"}>$match.1</a>}]
-	$result[^result.match[(?<![="`])((?:https?://|ftp://|mailto:)(?:[:\w~%{}\./?=&@,#-]+))][gi]{<a href="$match.1">$match.1</a>}]
+	$result[^result.match[\^[([^^^]]+)\^]\(([^^)]+?)(?:\s"([^^"]+?)")?\)][gi]{<a href="^if(def $match.2 && ^match.2.left(1) eq "/" && def $links.path){^taint[uri][$links.path]}$match.2"^if(def $match.3){ title="^taint[html][$match.3]"}^if(def $links.target){ target="^taint[html][$links.target]"}^if(def $links.rel){ rel="^taint[html][$links.rel]"}>$match.1</a>}]
+	$result[^result.match[(?<![="`])((?:https?://|ftp://|mailto:)(?:[:\w~%{}\./?=&@,#-]+))][gi]{<a href="^if(def $match.1 && ^match.1.left(1) eq "/" && def $links.path){^taint[uri][$links.path]}$match.1"^if(def $links.target){ target="^taint[html][$links.target]"}^if(def $links.rel){ rel="^taint[html][$links.rel]"}>$match.1</a>}]
 
 	^rem{ inline code }
 	$result[^result.match[(?<!`)`([^^`]+?)`(?!`)][g]{<code>$match.1</code>}]
@@ -196,7 +204,7 @@ $result[$text]
 	^rem{ abbr }
 	^if($tAbbreviation){
 		^tAbbreviation.menu{
-			$result[^result.match[(?<!\.)\b^taint[regex][$tAbbreviation.abbr]\b][g]{<abbr title="^taint[html][$tAbbreviation.title]">$tAbbreviation.abbr</abbr>}]
+			$result[^result.match[(?<!\.-)\b^taint[regex][$tAbbreviation.abbr]\b(?![.-])][g]{<abbr title="^taint[html][$tAbbreviation.title]">$tAbbreviation.abbr</abbr>}]
 		}
 	}
 }
@@ -227,20 +235,26 @@ $result[^table::create{piece	type	cnt}]
 			^case[$Types.CITE]{
 				^while($nextType eq $Types.CITE && ^temp.line[] < ^temp.count[]){
 					^temp.offset(1)
+					$isLast(^temp.line[] == ^temp.count[])
 					$nextType[^checkType[$temp.piece]]
 					$piece[$piece^if($nextType eq $Types.CITE){$Types.NL}$temp.piece]
 					^temp.delete[]
-					^temp.offset(-1)
+					^if(!$isLast){
+						^temp.offset(-1)
+					}
 				}
 			}
 
 			^case[$Types.FENCE]{
 				^while($nextType ne $Types.FENCE && ^temp.line[] < ^temp.count[]){
 					^temp.offset(1)
+					$isLast(^temp.line[] == ^temp.count[])
 					$nextType[^checkType[$temp.piece]]
 					$piece[$piece^if($nextType ne $Types.FENCE){$Types.NL}$temp.piece]
 					^temp.delete[]
-					^temp.offset(-1)
+					^if(!$isLast){
+						^temp.offset(-1)
+					}
 				}
 			}
 

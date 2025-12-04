@@ -50,6 +50,8 @@ test.. test... test..... test?..... test!....
 
 "Smartypants, double quotes" and 'single quotes'
 
+This&nbsp;text have some &laquo;mnemonic&raquo; symbols and&nbsp;unbreakeble spaces.
+
 
 ## Emphasis
 
@@ -180,9 +182,11 @@ Different aligned columns
 
 [link with title (mouse over and wait)](http://github.com/spearance/markdown-p3 "title text!")
 
-Autoconverted link without formating  https://spearance.ru
+Autoconverted link without formating https://spearance.ru
 
 Disable Autoconverted link `https://github.com/spearance`
+
+Relative link with inserted server name: [download markdown](/test.md)
 
 ### Email
 
@@ -217,4 +221,7 @@ This is HTML abbreviation example.
 
 It converts "HTML", but keep intact partial entries like "xxxHTMLyyy" and so on.
 
+Interception with abbreviation EXIF in link [exiftool.org/TagNames/EXIF.html](https://exiftool.org/TagNames/EXIF.html)
+
 *[HTML]: Hyper Text Markup Language
+*[EXIF]: Exchangeable image file format

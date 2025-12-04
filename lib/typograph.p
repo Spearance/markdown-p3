@@ -1,6 +1,6 @@
 # typograph.p
-# v. 1.0.3
-# Evgeniy Lepeshkin, 2025-11-28
+# v. 1.1.0
+# Evgeniy Lepeshkin, 2025-12-04
 
 @CLASS
 typograph
