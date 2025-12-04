@@ -50,6 +50,8 @@ test.. test... test..... test?..... test!....
 
 "Smartypants, double quotes" and 'single quotes'
 
+This&nbsp;text have some &laquo;mnemonic&raquo; symbols and&nbsp;unbreakeble spaces.
+
 
 ## Emphasis
 
