@@ -97,6 +97,11 @@ $example[^file::load[text;example.p]]
 					$.target[_blank]
 					$.rel[external]
 				]
+				$.images[
+					$.path[//$env:SERVER_NAME]
+					$.class[img]
+					$.figure(1)
+				]
 			]]
 			^markdown.parse[^untaint{$file.text}]
 		</section>

@@ -198,7 +198,7 @@ Write me: <mail@spearance.ru>
 ## Images
 
 ![Baikal Lake](https://img5tv.cdnvideo.ru/webp/shared/files/202102/1_1263573.jpg)
-[![Some Alt attribute](https://www.parser.ru/f/1/ptic.gif "The Bird")](https://parser.ru)
+[![Some Alt attribute](./ptic.gif "The Bird")](https://parser.ru)
 
 Like links, Images also have a footnote style syntax
 
