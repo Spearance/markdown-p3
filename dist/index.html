@@ -83,11 +83,21 @@ $markdown[^markdown::create[
 	^rem{ настроить ссылки }
 	$.links[
 		^rem{ добавить в начало ссылки часть пути или имя сервера }
-		$.path[$env:SERVER_NAME|/some-root-path]
+		$.path[//$env:SERVER_NAME|/some-path]
 		^rem{ добавлять атрибут target="" }
 		$.target[_blank|_self|...]
 		^rem{ добавлять атрибут rel="" }
 		$.rel[next|prev|nofollow|...]
+	]
+	
+	^rem{ настроить картинки }
+	$.images[
+		^rem{ добавить в начало ссылки часть пути или имя сервера }
+		$.path[//$env:SERVER_NAME|/some-path]
+		^rem{ добавлять атрибут class="" }
+		$.class[классы через пробел]
+		^rem{ оборачивать в <figure><img ...><figcaption>...</figcaption></figure> }
+		$.figure(1)
 	]
 ]]
 
@@ -297,7 +307,7 @@ Write me: &lt;mail@spearance.ru&gt;
 ## Images
 
 ![Baikal Lake](https://img5tv.cdnvideo.ru/webp/shared/files/202102/1_1263573.jpg)
-[![Some Alt attribute](https://www.parser.ru/f/1/ptic.gif &quot;The Bird&quot;)](https://parser.ru)
+[![Some Alt attribute](./ptic.gif &quot;The Bird&quot;)](https://parser.ru)
 
 Like links, Images also have a footnote style syntax
 
@@ -460,7 +470,23 @@ console.log(foo(5));</code></pre>
 <p>To quickly turn email address into a link, enclose it in angle brackets or without them.</p>
 <p>Write me: <a href="mailto:mail@spearance.ru">mail@spearance.ru</a></p>
 <h2>Images</h2>
-<p><img src="https://img5tv.cdnvideo.ru/webp/shared/files/202102/1_1263573.jpg" alt="Baikal Lake"><br><a href="https://parser.ru" target="_blank" rel="external"><img src="https://www.parser.ru/f/1/ptic.gif" alt="Some Alt attribute"title="The Bird"></a></p>
+<p>
+<figure>
+<img
+src="https://img5tv.cdnvideo.ru/webp/shared/files/202102/1_1263573.jpg"
+alt="Baikal Lake"
+class="img"
+>
+</figure>
+<br><a href="https://parser.ru" target="_blank" rel="external">
+<figure>
+<img
+src="//markdown-p3/./ptic.gif"
+alt="Some Alt attribute"
+class="img"
+>
+<figcaption>The Bird</figcaption></figure>
+</a></p>
 <p>Like links, Images also have a footnote style syntax</p>
 <p>![Alt text][id]</p>
 <p>With a reference later in the document defining the URL location:</p>

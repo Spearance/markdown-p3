@@ -18,11 +18,21 @@ $markdown[^markdown::create[
 	^rem{ настроить ссылки }
 	$.links[
 		^rem{ добавить в начало ссылки часть пути или имя сервера }
-		$.path[$env:SERVER_NAME|/some-root-path]
+		$.path[//$env:SERVER_NAME|/some-path]
 		^rem{ добавлять атрибут target="" }
 		$.target[_blank|_self|...]
 		^rem{ добавлять атрибут rel="" }
 		$.rel[next|prev|nofollow|...]
+	]
+	
+	^rem{ настроить картинки }
+	$.images[
+		^rem{ добавить в начало ссылки часть пути или имя сервера }
+		$.path[//$env:SERVER_NAME|/some-path]
+		^rem{ добавлять атрибут class="" }
+		$.class[классы через пробел]
+		^rem{ оборачивать в <figure><img ...><figcaption>...</figcaption></figure> }
+		$.figure(1)
 	]
 ]]
 

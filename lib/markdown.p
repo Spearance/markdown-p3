@@ -28,6 +28,9 @@ $self.highlight(^if($param.highlight){$param.highlight}{0})
 ^if($param.links is "hash"){
 	$self.links[^hash::create[$param.links]]
 }
+^if($param.images is "hash"){
+	$self.images[^hash::create[$param.images]]
+}
 
 ^if($self.highlight){
 	^use[lang-highlight.p]
@@ -183,13 +186,22 @@ $result[$text]
 	$result[^result.match[(?<!\b)(\={2}\b)([^^+]+?)\1(?!\b)][g]{<mark>$match.2</mark>}]
 
 	^rem{ image }
-	$result[^result.match[\!\^[([^^^]]*)\^]\(([^^)]+?)(?:\s"([^^"]+?)")?\)][g]{<img src="$match.2" alt="^taint[html][$match.1]"^if(def $match.3){title="^taint[html][$match.3]"}>}]
+	$result[^result.match[\!\^[([^^^]]*)\^]\(([^^)]+?)(?:\s"([^^"]+?)")?\)][g]{
+		^if(^images.figure.int(0)){<figure>}
+		<img
+			src="^if(def $match.2 && def $images.path && !^match.2.match[^^(?:https?|[a-z]+?:)][i] && -f "$match.2"){$images.path^file:fullpath[$match.2]}{$match.2}"
+			alt="^taint[html][$match.1]"
+			^if(def $match.3 && ^images.figure.int(0) == 0){ title="^taint[html][$match.3]"}
+			^if(def $images.class){ class="^taint[html][$images.class]"}
+		>
+		^if(^images.figure.int(0)){^if(def $match.3){<figcaption>$match.3</figcaption>}</figure>}
+	}]
 
 	^rem{ email }
 	$result[^result.match[(?<![="]mailto:)(?:&lt^;|<)?([-\w.]+@[-\w.]+\.\w{2,15})(?:&gt^;|>)?][gi]{<a href="mailto:$match.1">$match.1</a>}]
 
 	^rem{ link }
-	$result[^result.match[\^[([^^^]]+)\^]\(([^^)]+?)(?:\s"([^^"]+?)")?\)][gi]{<a href="^if(def $match.2 && ^match.2.left(1) eq "/" && def $links.path){^taint[uri][$links.path]}$match.2"^if(def $match.3){ title="^taint[html][$match.3]"}^if(def $links.target){ target="^taint[html][$links.target]"}^if(def $links.rel){ rel="^taint[html][$links.rel]"}>$match.1</a>}]
+	$result[^result.match[\^[([^^^]]+)\^]\(([^^)]+?)(?:\s"([^^"]+?)")?\)][gi]{<a href="^if(def $match.2 && def $links.path && !^match.2.match[^^(?:https?|[a-z]+?:)][i]){^taint[uri][$links.path]}$match.2"^if(def $match.3){ title="^taint[html][$match.3]"}^if(def $links.target){ target="^taint[html][$links.target]"}^if(def $links.rel){ rel="^taint[html][$links.rel]"}>$match.1</a>}]
 	$result[^result.match[(?<![="`])((?:https?://|ftp://|mailto:)(?:[:\w~%{}\./?=&@,#-]+))][gi]{<a href="^if(def $match.1 && ^match.1.left(1) eq "/" && def $links.path){^taint[uri][$links.path]}$match.1"^if(def $links.target){ target="^taint[html][$links.target]"}^if(def $links.rel){ rel="^taint[html][$links.rel]"}>$match.1</a>}]
 
 	^rem{ inline code }
