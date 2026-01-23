@@ -40,6 +40,8 @@ $markdown[^markdown::create[
 		$.class[классы через пробел]
 		^rem{ оборачивать в <figure><img ...><figcaption>...</figcaption></figure> }
 		$.figure(1)
+		^rem{ добавить атрибут loading="lazy" }
+		$.lazy(1)
 	]
 ]]
 
@@ -70,7 +72,7 @@ $markdown[^markdown::create[
 * Курсив
 * Жирный-курсив
 * Зачёркнутый
-* Подчеркнутый
+* Подчёркнутый
 * Маркированный
 * Верхний/нижний индексы
 

@@ -98,6 +98,8 @@ $markdown[^markdown::create[
 		$.class[классы через пробел]
 		^rem{ оборачивать в <figure><img ...><figcaption>...</figcaption></figure> }
 		$.figure(1)
+		^rem{ добавить атрибут loading="lazy" }
+		$.lazy(1)
 	]
 ]]
 
@@ -481,7 +483,7 @@ class="img"
 <br><a href="https://parser.ru" target="_blank" rel="external">
 <figure>
 <img
-src="https://spearance.github.io/markdown-p3/dist/ptic.gif"
+src="./ptic.gif"
 alt="Some Alt attribute"
 class="img"
 >
@@ -496,7 +498,7 @@ class="img"
 <blockquote> Shortcuts (emoticons): 🙂 😦 😎 😉 😢</blockquote>
 <h3>Abbreviations</h3>
 <p>This is <abbr title="Hyper Text Markup Language">HTML</abbr> abbreviation example.</p>
-<p>It converts "<abbr title="Hyper Text Markup Language">HTML</abbr>", but keep intact partial entries like "xxxHTMLyyy" and so on.</p>
+<p>It converts "HTML", but keep intact partial entries like "xxxHTMLyyy" and so on.</p>
 <p>Interception with abbreviation <abbr title="Exchangeable image file format">EXIF</abbr> in link <a href="https://exiftool.org/TagNames/EXIF.html" target="_blank" rel="external">exiftool.org/TagNames/EXIF.html</a></p>
 </section>
 </article>
