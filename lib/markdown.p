@@ -199,7 +199,7 @@ $result[$text]
 			alt="^taint[html][$match.1]"
 			^if(def $match.3 && ^images.figure.int(0) == 0){ title="^taint[html][$match.3]"}
 			^if(def $images.class){ class="^taint[html][$images.class]"}
-			^if(def $images.lazy){ loading="lazy"}
+			^if(^images.lazy.int(0)){ loading="lazy"}
 		>
 		^if(^images.figure.int(0)){^if(def $match.3){<figcaption>$match.3</figcaption>}</figure>}
 	}]
