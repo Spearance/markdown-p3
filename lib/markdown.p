@@ -391,7 +391,7 @@ $result[]
 		$result[$Types.CITE]
 	}(^text.match[^^\s*[+*-]\s]){
 		$result[$Types.UL]
-	}(^text.match[^^\s*\d+[.)]?\s]){
+	}(^text.match[^^\s*\d+[.)]\s]){
 		$result[$Types.OL]
 	}(^text.match[^^`{3}]){
 		$result[$Types.FENCE]
