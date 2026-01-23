@@ -1,6 +1,6 @@
 # markdown.p
-# v. 1.1.0
-# Evgeniy Lepeshkin, 2025-12-04
+# v. 1.1.1
+# Evgeniy Lepeshkin, 2026-01-23
 
 @CLASS
 markdown
@@ -18,6 +18,12 @@ markdown
 # 	$.path[] - prefix path for relative links
 # 	$.target[] - value of target attribute
 # 	$.rel[] - value of rel attribute
+# ]
+# $.images[
+# 	$.path[] - prefix path for relative links
+# 	$.class[] - name of classes
+# 	$.figure(1) - wrap <figure> tag with <figcaption>
+#		$.lazy(1) - add lazy loading
 # ]
 # 
 @create[param]
@@ -78,7 +84,7 @@ $result[]
 			^try{
 				$result[$result^outLineRules[^if($parts.type ne $Types.CODE && $parts.type ne $Types.FENCE){^inLineRules[$parts.piece]}{$parts.piece};$parts.type;$parts.cnt]]
 			}{
-				$exceptions.handled(1)
+				$exception.handled(1)
 			}
 		}{
 			$result[$result^#0A]
@@ -116,7 +122,7 @@ $result[$text][locals]
 		}
 
 		^case[$Types.FENCE]{
-			$result[^result.match[^^`{3}\s*([a-z0-9-+]+)?^taint[regex][$Types.NL]?([^^`]*?)`{3}^$][i]{<pre><code^if(def $match.1 && ^tHighlight.locate[lang;$match.1]){ class="language-$match.1"}>^apply-taint[as-is][^replaceNewLine[$match.2]]</code></pre>}]
+			$result[^result.match[^^`{3}\s*([a-z0-9-+]+)?\s*^taint[regex][$Types.NL]?([^^`]*?)`{3}^$][i]{<pre><code^if(def $match.1 && ^tHighlight.locate[lang;$match.1]){ class="language-$match.1"}>^apply-taint[as-is][^replaceNewLine[$match.2]]</code></pre>}]
 		}
 
 		^case[$Types.CODE]{
@@ -173,7 +179,7 @@ $result[$text]
 ^if(def $result){
 	^rem{ bold, italic }
 	^if(!^result.match[^^(_{4,}|\*{4,})]){
-		$result[^result.match[(?<![_*])(_{1,3}|\*{1,3})((?:\b|`|[^^ ])[^^\1]+?)\1][g]{${hTag.[^match.1.length[]].open}${match.2}$hTag.[^match.1.length[]].close}]
+		$result[^result.match[(?<![_*])(_{1,3}|\*{1,3})([^^\1]+?)\1][g]{${hTag.[^match.1.length[]].open}${match.2}$hTag.[^match.1.length[]].close}]
 	}
 
 	^rem{ strike }
@@ -189,16 +195,17 @@ $result[$text]
 	$result[^result.match[\!\^[([^^^]]*)\^]\(([^^)]+?)(?:\s"([^^"]+?)")?\)][g]{
 		^if(^images.figure.int(0)){<figure>}
 		<img
-			src="^if(def $match.2 && def $images.path && !^match.2.match[^^(?:https?|[a-z]+?:)][i] && -f "$match.2"){$images.path^file:fullpath[$match.2]}{$match.2}"
+			src="^if(def $match.2 && def $images.path && !^match.2.match[^^(?:https?|[a-z]+?:)][i] && -f "$images.path^file:fullpath[$match.2]"){$images.path^file:fullpath[$match.2]}{$match.2}"
 			alt="^taint[html][$match.1]"
 			^if(def $match.3 && ^images.figure.int(0) == 0){ title="^taint[html][$match.3]"}
 			^if(def $images.class){ class="^taint[html][$images.class]"}
+			^if(def $images.lazy){ loading="lazy"}
 		>
 		^if(^images.figure.int(0)){^if(def $match.3){<figcaption>$match.3</figcaption>}</figure>}
 	}]
 
 	^rem{ email }
-	$result[^result.match[(?<![="]mailto:)(?:&lt^;|<)?([-\w.]+@[-\w.]+\.\w{2,15})(?:&gt^;|>)?][gi]{<a href="mailto:$match.1">$match.1</a>}]
+	$result[^result.match[(?<![="]mailto:|`)(?:&lt^;|<)?([-\w.]+@[-\w.]+\.\w{2,15})(?:&gt^;|>)?][gi]{<a href="mailto:$match.1">$match.1</a>}]
 
 	^rem{ link }
 	$result[^result.match[\^[([^^^]]+)\^]\(([^^)]+?)(?:\s"([^^"]+?)")?\)][gi]{<a href="^if(def $match.2 && def $links.path && !^match.2.match[^^(?:https?|[a-z]+?:)][i]){^taint[uri][$links.path]}$match.2"^if(def $match.3){ title="^taint[html][$match.3]"}^if(def $links.target){ target="^taint[html][$links.target]"}^if(def $links.rel){ rel="^taint[html][$links.rel]"}>$match.1</a>}]
@@ -216,7 +223,7 @@ $result[$text]
 	^rem{ abbr }
 	^if($tAbbreviation){
 		^tAbbreviation.menu{
-			$result[^result.match[(?<!\.-)\b^taint[regex][$tAbbreviation.abbr]\b(?![.-])][g]{<abbr title="^taint[html][$tAbbreviation.title]">$tAbbreviation.abbr</abbr>}]
+			$result[^result.match[(?<!\.-)\b^taint[regex][$tAbbreviation.abbr]\b(?!["-])(?=[.,:^;]?(?:\n|^$| ))][g]{<abbr title="^taint[html][$tAbbreviation.title]">$tAbbreviation.abbr</abbr>}]
 		}
 	}
 }
@@ -384,7 +391,7 @@ $result[]
 		$result[$Types.CITE]
 	}(^text.match[^^\s*[+*-]\s]){
 		$result[$Types.UL]
-	}(^text.match[^^\s*\d+[.)]?\s]){
+	}(^text.match[^^\s*\d+[.)]\s]){
 		$result[$Types.OL]
 	}(^text.match[^^`{3}]){
 		$result[$Types.FENCE]
@@ -409,7 +416,7 @@ $result[]
 	$levels[^hash::create[]]
 	$list[^table::create{level	title	type	number}]
 
-	$text[^text.match[^^([ ]+|\t+)*([+*-]|\d+[.)]?)\s+(.+?)^$][gm]{^list.append[
+	$text[^text.match[^^([ ]+|\t+)*([+*-]|\d+[.)])\s+(.+?)^$][gm]{^list.append[
 		$.level(^if(def $match.1 && ^match.1.left(1) eq " "){^eval(^match.1.length[] / 2)}{^match.1.length[]} + 1)
 		$.title[$match.3]
 		$.type[^if(def $match.2 && ^match.2.match[\d]){$Types.OL}{$Types.UL}]
@@ -452,7 +459,7 @@ $result[]
 $result[$text]
 
 ^if(def $text){
-	$result[^result.match[<(/?[a-z][^^>]*?)>][g]{&lt^;$match.1&gt^;}]
+	$result[^result.match[<(/?[a-z][^^>]*?)>][gi]{&lt^;$match.1&gt^;}]
 }
 ### End @escapeTagBrackets
 
