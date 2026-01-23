@@ -1,6 +1,6 @@
 # typograph.p
-# v. 1.1.0
-# Evgeniy Lepeshkin, 2025-12-04
+# v. 1.1.1
+# Evgeniy Lepeshkin, 2026-01-23
 
 @CLASS
 typograph
@@ -20,15 +20,15 @@ $result[$text]
 	$result[^result.match[\(r\)][gi]{<sup>®</sup>}]
 
 	^rem{ ruble }
-	$result[^result.match[\([рp]\)][gi]{₽}]
+	$result[^result.match[(?<![a-z])\([рp]\)][gi]{₽}]
 
 	^rem{ plus/minus }
-	$result[^result.match[\+/-][gi]{±}]
+	$result[^result.match[\+/-][g]{±}]
 
 	^rem{ dash }
-	$result[^result.match[(?<!-)-{2}(?>\s)][gi]{—}]
+	$result[^result.match[(?<!-)-{2}(?>\s)][g]{—}]
 
 	^rem{ hellip }
-	$result[^result.match[(?<!\.)\.{3}(?!\.)][gi]{…}]
+	$result[^result.match[(?<!\.)\.{3}(?!\.)][g]{…}]
 }
 ### End @parse

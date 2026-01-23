@@ -416,7 +416,7 @@ $result[]
 	$levels[^hash::create[]]
 	$list[^table::create{level	title	type	number}]
 
-	$text[^text.match[^^([ ]+|\t+)*([+*-]|\d+[.)]?)\s+(.+?)^$][gm]{^list.append[
+	$text[^text.match[^^([ ]+|\t+)*([+*-]|\d+[.)])\s+(.+?)^$][gm]{^list.append[
 		$.level(^if(def $match.1 && ^match.1.left(1) eq " "){^eval(^match.1.length[] / 2)}{^match.1.length[]} + 1)
 		$.title[$match.3]
 		$.type[^if(def $match.2 && ^match.2.match[\d]){$Types.OL}{$Types.UL}]
