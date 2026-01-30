@@ -526,7 +526,7 @@ $result[$text]
 			$result[^text.match[\\(^escaped.menu{^taint[regex][$escaped.char]}[|])][g]{$Types.ESC^hContainer.[$type].add[$.[$counter][$match.1]]^counter.inc[]}]
 		}
 		^case[snake]{
-			$result[^text.match[(\b(?:[a-zа-я0-9]+_[a-zа-я0-9]+)+)\b][gi]{$Types.SNAKE^hContainer.[$type].add[$.[$counter][$match.1]]^counter.inc[]}]
+			$result[^text.match[(\b(?:[a-zа-я0-9]+_)+[a-zа-я0-9]+\b)][gi]{$Types.SNAKE^hContainer.[$type].add[$.[$counter][$match.1]]^counter.inc[]}]
 		}
 	}
 }
