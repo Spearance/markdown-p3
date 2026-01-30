@@ -459,7 +459,7 @@ $result[]
 $result[$text]
 
 ^if(def $text){
-	$result[^result.match[<(/?[a-z][^^>]*?)>][gi]{&lt^;$match.1&gt^;}]
+	$result[^result.match[<([/?!]?[a-z][^^>]*?)>][gi]{&lt^;$match.1&gt^;}]
 }
 ### End @escapeTagBrackets
 
