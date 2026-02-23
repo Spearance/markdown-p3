@@ -1,6 +1,6 @@
 # markdown.p
 # v. 1.1.1
-# Evgeniy Lepeshkin, 2026-01-23
+# Evgeniy Lepeshkin, 2026-02-23
 
 @CLASS
 markdown
@@ -205,11 +205,11 @@ $result[$text]
 	}]
 
 	^rem{ email }
-	$result[^result.match[(?<![="]mailto:|`)(?:&lt^;|<)?([-\w.]+@[-\w.]+\.\w{2,15})(?:&gt^;|>)?][gi]{<a href="mailto:$match.1">$match.1</a>}]
+	$result[^result.match[(?<![="]mailto:|`)(?:&lt^;|<)?(!)?([-\w.]+@[-\w.]+\.\w{2,15})(?:&gt^;|>)?][gi]{^if(def $match.1){$match.2}{<a href="mailto:$match.2">$match.2</a>}}]
 
 	^rem{ link }
 	$result[^result.match[\^[([^^^]]+)\^]\(([^^)]+?)(?:\s"([^^"]+?)")?\)][gi]{<a href="^if(def $match.2 && def $links.path && !^match.2.match[^^(?:https?|[a-z]+?:)][i]){^taint[uri][$links.path]}$match.2"^if(def $match.3){ title="^taint[html][$match.3]"}^if(def $links.target){ target="^taint[html][$links.target]"}^if(def $links.rel){ rel="^taint[html][$links.rel]"}>$match.1</a>}]
-	$result[^result.match[(?<![="`])((?:https?://|ftp://|mailto:)(?:[:\w~%{}\./?=&@,#-]+))][gi]{<a href="^if(def $match.1 && ^match.1.left(1) eq "/" && def $links.path){^taint[uri][$links.path]}$match.1"^if(def $links.target){ target="^taint[html][$links.target]"}^if(def $links.rel){ rel="^taint[html][$links.rel]"}>$match.1</a>}]
+	$result[^result.match[(?<![="`])(!)?((?:https?://|ftp://|mailto:)(?:[:\w~%{}\./?=&@,#-]+))][gi]{^if(def $match.1){$match.2}{<a href="^if(def $match.2 && ^match.2.left(1) eq "/" && def $links.path){^taint[uri][$links.path]}$match.2"^if(def $links.target){ target="^taint[html][$links.target]"}^if(def $links.rel){ rel="^taint[html][$links.rel]"}>$match.2</a>}}]
 
 	^rem{ inline code }
 	$result[^result.match[(?<!`)`([^^`]+?)`(?!`)][g]{<code>$match.1</code>}]
@@ -223,7 +223,7 @@ $result[$text]
 	^rem{ abbr }
 	^if($tAbbreviation){
 		^tAbbreviation.menu{
-			$result[^result.match[(?<!\.-)\b^taint[regex][$tAbbreviation.abbr]\b(?!["-])(?=[.,:^;]?(?:\n|^$| ))][g]{<abbr title="^taint[html][$tAbbreviation.title]">$tAbbreviation.abbr</abbr>}]
+			$result[^result.match[(?<!\.-)\b^taint[regex][$tAbbreviation.abbr]\b(?!["-])(?=[.,:^;]?(?:\n|^$|[  ]))][g]{<abbr title="^taint[html][$tAbbreviation.title]">$tAbbreviation.abbr</abbr>}]
 		}
 	}
 }
@@ -459,7 +459,7 @@ $result[]
 $result[$text]
 
 ^if(def $text){
-	$result[^result.match[<(/?[a-z][^^>]*?)>][gi]{&lt^;$match.1&gt^;}]
+	$result[^result.match[<([/?!]?[a-z][^^>]*?)>][gi]{&lt^;$match.1&gt^;}]
 }
 ### End @escapeTagBrackets
 
@@ -526,7 +526,7 @@ $result[$text]
 			$result[^text.match[\\(^escaped.menu{^taint[regex][$escaped.char]}[|])][g]{$Types.ESC^hContainer.[$type].add[$.[$counter][$match.1]]^counter.inc[]}]
 		}
 		^case[snake]{
-			$result[^text.match[(\b(?:[a-zа-я0-9]+_[a-zа-я0-9]+)+)\b][gi]{$Types.SNAKE^hContainer.[$type].add[$.[$counter][$match.1]]^counter.inc[]}]
+			$result[^text.match[(\b(?:[a-zа-я0-9]+_)+[a-zа-я0-9]+\b)][gi]{$Types.SNAKE^hContainer.[$type].add[$.[$counter][$match.1]]^counter.inc[]}]
 		}
 	}
 }

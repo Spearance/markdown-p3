@@ -186,6 +186,8 @@ Autoconverted link without formating https://spearance.ru
 
 Disable Autoconverted link `https://github.com/spearance`
 
+Disable Autoconverted link in Code `^file::load[!http://github.com/spearance]`
+
 Relative link with inserted server name: [download markdown](/test.md)
 
 ### Email
@@ -193,6 +195,8 @@ Relative link with inserted server name: [download markdown](/test.md)
 To quickly turn email address into a link, enclose it in angle brackets or without them.
 
 Write me: <mail@spearance.ru>
+
+Disable Autoconverted email !mail@spearance.ru
 
 
 ## Images
